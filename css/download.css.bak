@@ -1,0 +1,115 @@
+﻿/* CSS Document */
+/*margin:0 auto ——>margin后有两个参数的话，第一个表示top和bottom，第二个表示left和right此为0 auto，表示上下边界为0，左右则根据宽度自适应相同值（即居中）
+*font-family这个属性是用于设置字体类型，后面的参数“Verdana”是一种字体
+*line-height:1.5设置样式为1.5倍的行高。
+**/
+
+@font-face{font-family:'yahei';src:url(../images/font.OTF);}
+
+body { font-size:12px; margin-left:0px; margin-top:0px; margin-bottom:0px; font-family:yahei; line-height:1.5;text-align:center;
+width:100%;height:100%;  background-image:url(../images/beijing.png);overflow:auto;overflow-x:hidden; }
+ul,dl,dd,h1,h2,h3,h4,h5,h6,form,p { padding:0; margin:0; font-family:yahei;}
+.none {display: none;}
+.block {display: block;}
+
+/******最大的外围边框*****/
+#container{
+	margin:0 auto;	
+	min-width:800px;
+	border:0px solid #d2d2d2; 
+}
+
+a{ color:#FFFFFF;}
+a:hover{ color:#08B4FC;}
+a:link{text-decoration:none}
+* html a:hover{text-decoration:none}
+a:visited{text-decoration:none}
+/*中间标题，包括免费、试用、道具、收费按钮和搜索*/
+#header{	
+    margin:0 auto;
+    text-align:center;
+	height:104px;
+	width:100%;
+    border:0px solid #d2d2d2; 
+}
+
+.right
+{
+    float:right;
+}
+
+
+#header img{ margin-left:0px; float :left; margin-left:0px; margin-top:0px; border:0px solid #cbcbcb; z-index:5}
+#help{ float:right; font-size:17px; width:300px;margin-right:15px; height:104px; z-index:100;border:0px solid #cbcbcb; cursor:pointer; }
+#help ul li{ float:right; height:94px; width:100px; margin-left:3px;border:0px solid #cbcbcb; list-style-type:none; text-align:center;border-bottom-width:10px;}
+#help ul li p{ margin-top:40px; color:#F79946;text-shadow:0px 1px 0px #555555; }
+#mouse{ position:absolute; right:280px; font-size:36px; color:#FFFFFF; top:20px; z-index:100;border:0px solid #cbcbcb; cursor:pointer;}
+
+
+#content{ width:100%; float:left; text-align:center;}
+
+#contentTitle{ width:100%; height:478px; background:rgb(253,234,142);}
+#titleBack{ width:1024px; height:100%; margin:0 auto;border:0px solid #cbcbcb; background:url(../images/tu03.png) no-repeat; text-align:center;}
+
+#contentTitleRight{ width:50%; float:left;height:100%;border:0px solid #cbcbcb; margin-left:0px; text-align:left;}
+
+
+#install_button{ width:230px; height:86px; background:url(../images/install.png) 2px 0 no-repeat;  margin-top:15px; float:left;}
+#Introduction{ width:100%; float:left; margin-top:15px;border:0px solid #cbcbcb;}
+#Introduction ul li{color:rgb(110,65,44); width:39%; height:20px; font-size:16px;border:0px solid #cbcbcb; margin-top:5px; display:inherit; float:left;text-shadow: 0px 1px 0px #fff; text-align:left;}
+.newcontentCont{ width:1080px;border:0px solid #cbcbcb; margin:0 auto; margin-top:0px; margin-bottom:0px;}
+    .newcontentCont li
+    {
+        width:33%;
+        border:0px solid #cbcbcb; 
+        float:left;
+        list-style:none;
+    }
+     .newcontentCont li img{
+         margin:0 auto;
+         width:60%;
+         margin-top:55px;
+         text-align:center;
+        
+     }
+     .newcontentCont li p{
+         color:#666666;
+         font-size:20px;
+         width:100%;
+         letter-spacing:3px;
+         margin:0 auto;
+         text-align:center;
+         margin-top:25px;
+     }
+.contentCont{ width:1080px;border:0px solid #cbcbcb; margin:0 auto; margin-top:15px; margin-bottom:15px;}
+.contentCont .contentContItem{ width:46.2%; display:inherit; border:0px solid #cbcbcb; margin-left:0px; text-align:left; margin-top:0px; float:left;}
+.contentCont .contentContItem img{float:left; width:100%;}
+.contentCont  p{  float:left; width:100%; border:0px solid #cbcbcb; margin-top:10px; font-size:34px;   font-weight:lighter;letter-spacing:3px;}
+.contentCont .contentContItem h1{ width:329px; float:left; border:0px solid #cbcbcb; margin-top:5px; font-weight:inherit; font-size:19px;  margin-left:26px;}
+
+.contentCont h2{ font-size:35px; float:left; border:0px solid #cbcbcb; font-weight:lighter; width:100%; margin-bottom:15px;}
+.width_screen{ width:100%; float:left;text-align:center;}
+#bottomRule{ width:100%; height:154px;  background:#434343;}
+#bottomRule p{ color:#ffffff; font-size:17px; border:0px solid #cbcbcb; margin-top:4px;letter-spacing:1px;}
+
+.backToTop {
+    display: none;
+    width: 18px;
+    line-height: 1.2;
+    padding: 5px 0;
+    background-color: #000;
+    color: #fff;
+    font-size: 12px;
+    text-align: center;
+    position: fixed;
+    _position: absolute;
+    right: 10px;
+    bottom: 200px;
+    _bottom: auto;
+    cursor: pointer;
+    opacity: .6;
+    filter: Alpha(opacity=60);
+}
+
+
+
