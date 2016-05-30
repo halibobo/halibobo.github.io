@@ -94,7 +94,7 @@
 对android开发有一定了解的同学一定或多或少知道android的触摸事件分发，整个事件的分发消耗流程都可以通过看源码理解，下面通过讲解demo帮助加深事件分发的理解和在实战中的应用。首先直接上demo截">
 <meta property="og:image" content="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/touch_listener/1.gif">
 <meta property="og:image" content="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/touch_listener/border.png">
-<meta property="og:updated_time" content="2016-05-29T14:09:43.741Z">
+<meta property="og:updated_time" content="2016-05-30T01:08:11.141Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="高仿支付宝首页界面">
 <meta name="twitter:description" content="结合支付宝和微信首页巩固android事件分发机制源码地址 https://github.com/halibobo/TouchListenerConflictandroid的事件分发和处理方式
@@ -467,25 +467,22 @@ public boolean onTouchEvent(MotionEvent ev) {
 </blockquote>
 <h4 id="解决问题三"><a href="#解决问题三" class="headerlink" title="解决问题三"></a>解决问题三</h4><p>为题三的解决比较简单，当gridview接收到长按事件后，处理ViewPager和ScrollView的方法一样<code>requestDisallowInterceptTouchEvent(false);</code> 这个方法是让ViewGroup本身不拦截触摸事件。当gridView滑动结束在<code>requestDisallowInterceptTouchEvent(true);</code></p>
 <h4 id="解决问题四"><a href="#解决问题四" class="headerlink" title="解决问题四"></a>解决问题四</h4><p>直接上源码</p>
-<pre><code>public class ControlScrollView  extends ScrollView {
+<pre><code>public class ControlScrollView extends ScrollView {
 
-DragGridView grid;
 private boolean isInControl = true;
-private  int moveSpeed = 15;
+private int moveSpeed = 5;
 private final int msgWhat = 1;
-private final int time = 40;
+private final int time = 20;
+private ScrollState scrollState;
 
 public ControlScrollView(Context context) {
     super(context);
-}
-
-public void setGrid(DragGridView grid) {
-    this.grid = grid;
     init();
 }
 
 public ControlScrollView(Context context, AttributeSet attrs) {
     super(context, attrs);
+    init();
 }
 
 @Override
@@ -509,16 +506,18 @@ public boolean dispatchTouchEvent(MotionEvent ev) {
                         myHandler.sendMessageDelayed(msg, time);
                     }
                     return super.dispatchTouchEvent(ev);
-                }else{
+                } else {
                     myHandler.removeMessages(msgWhat);
                 }
-            }else{
+            } else {
                 myHandler.removeMessages(msgWhat);
             }
             break;
         case MotionEvent.ACTION_UP:
         case MotionEvent.ACTION_CANCEL:
-            grid.stopDrag();
+            if (scrollState != null) {
+                scrollState.stopTouch();
+            }
             myHandler.removeMessages(msgWhat);
             requestDisallowInterceptTouchEvent(false);
             break;
@@ -527,38 +526,32 @@ public boolean dispatchTouchEvent(MotionEvent ev) {
 }
 
 
-
 @Override
 protected void onDetachedFromWindow() {
     super.onDetachedFromWindow();
     myHandler.removeMessages(msgWhat);
-    grid.stopDrag();
-
 }
 
 
 private void init() {
     moveSpeed = ScreenUtils.dip2px(getContext(), moveSpeed);
-    grid.setOnDragStartListener(new DragGridView.OnDragStartListener() {
-        @Override
-        public void onDragStart() {
-            requestDisallowInterceptTouchEvent(true);
-            isInControl = false;
-            ((MainActivity) getContext()).setViewpagerNoSCroll(true);
-        }
-    });
-    grid.setOnDragEndListener(new DragGridView.OnDragEndListener() {
-        @Override
-        public void onDragEnd() {
-            requestDisallowInterceptTouchEvent(false);
-            isInControl = true;
-            ((MainActivity) getContext()).setViewpagerNoSCroll(false);
-            grid.postInvalidate();
-        }
-    });
 }
 
+public boolean isInControl() {
+    return isInControl;
+}
 
+public ScrollState getScrollState() {
+    return scrollState;
+}
+
+public void setScrollState(ScrollState scrollState) {
+    this.scrollState = scrollState;
+}
+
+public void setInControl(boolean inControl) {
+    isInControl = inControl;
+}
 
 private Handler myHandler = new Handler() {
     @Override
@@ -571,6 +564,10 @@ private Handler myHandler = new Handler() {
         myHandler.sendMessageDelayed(msg1, time);
     }
 };
+
+public interface ScrollState {
+    void stopTouch();
+}
 </code></pre><p>}</p>
 <blockquote>
 <p>解析：大致逻辑就是判断手指位置，超出边界发送消息对scrollview进行滚动</p>
