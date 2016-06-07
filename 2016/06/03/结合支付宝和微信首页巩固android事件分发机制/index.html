@@ -1,0 +1,1034 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="android事件分发机制-结合支付宝和微信首页巩固android事件分发机制" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="结合支付宝和微信首页巩固android事件分发机制源码地址 https://github.com/halibobo/TouchListenerConflictandroid的事件分发和处理方式
+对android开发有一定了解的同学一定或多或少知道android的触摸事件分发，整个事件的分发消耗流程都可以通过看源码理解，下面通过讲解demo帮助加深事件分发的理解和在实战中的应用。首先直接上demo截">
+<meta property="og:type" content="article">
+<meta property="og:title" content="结合支付宝和微信首页巩固android事件分发机制">
+<meta property="og:url" content="http://dahei.me/2016/06/03/结合支付宝和微信首页巩固android事件分发机制/index.html">
+<meta property="og:site_name" content="大黑">
+<meta property="og:description" content="结合支付宝和微信首页巩固android事件分发机制源码地址 https://github.com/halibobo/TouchListenerConflictandroid的事件分发和处理方式
+对android开发有一定了解的同学一定或多或少知道android的触摸事件分发，整个事件的分发消耗流程都可以通过看源码理解，下面通过讲解demo帮助加深事件分发的理解和在实战中的应用。首先直接上demo截">
+<meta property="og:image" content="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/touch_listener/1.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/touch_listener/border.png">
+<meta property="og:updated_time" content="2016-06-07T00:55:38.687Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="结合支付宝和微信首页巩固android事件分发机制">
+<meta name="twitter:description" content="结合支付宝和微信首页巩固android事件分发机制源码地址 https://github.com/halibobo/TouchListenerConflictandroid的事件分发和处理方式
+对android开发有一定了解的同学一定或多或少知道android的触摸事件分发，整个事件的分发消耗流程都可以通过看源码理解，下面通过讲解demo帮助加深事件分发的理解和在实战中的应用。首先直接上demo截">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/touch_listener/1.gif">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> 结合支付宝和微信首页巩固android事件分发机制 | 大黑 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?ee54825c8b6ca50edaa53eed126150c0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">大黑</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">大黑是一直黑色泰迪</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                结合支付宝和微信首页巩固android事件分发机制
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-06-03T14:22:49+08:00" content="2016-06-03">
+              2016-06-03
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/06/03/结合支付宝和微信首页巩固android事件分发机制/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/06/03/结合支付宝和微信首页巩固android事件分发机制/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/06/03/结合支付宝和微信首页巩固android事件分发机制/" class="leancloud_visitors" data-flag-title="结合支付宝和微信首页巩固android事件分发机制">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="结合支付宝和微信首页巩固android事件分发机制"><a href="#结合支付宝和微信首页巩固android事件分发机制" class="headerlink" title="结合支付宝和微信首页巩固android事件分发机制"></a>结合支付宝和微信首页巩固android事件分发机制</h1><h4 id="源码地址-https-github-com-halibobo-TouchListenerConflict"><a href="#源码地址-https-github-com-halibobo-TouchListenerConflict" class="headerlink" title="源码地址 https://github.com/halibobo/TouchListenerConflict"></a>源码地址 <a href="https://github.com/halibobo/TouchListenerConflict" target="_blank" rel="external">https://github.com/halibobo/TouchListenerConflict</a></h4><h2 id="android的事件分发和处理方式"><a href="#android的事件分发和处理方式" class="headerlink" title="android的事件分发和处理方式"></a>android的事件分发和处理方式</h2><blockquote>
+<p>对android开发有一定了解的同学一定或多或少知道android的触摸事件分发，整个事件的分发消耗流程都可以通过看源码理解，下面通过讲解demo帮助加深事件分发的理解和在实战中的应用。首先直接上demo截图：</p>
+</blockquote>
+<p> <img src="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/touch_listener/1.gif" alt="enter image description here"></p>
+<h3 id="demo布局"><a href="#demo布局" class="headerlink" title="demo布局"></a>demo布局</h3><blockquote>
+<p>整个首页布局是这样的，最外层是ViewPager，里面包含四个子功能，每个子功能的视图都是一个Fragment。“功能1”里的列表项是一个GridView，此gridview外层是带有LinearLayout的ScrollView。<br>布局如下<br><img src="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/touch_listener/border.png" alt="enter image description here"></p>
+</blockquote>
+<h3 id="难点分析和讲解"><a href="#难点分析和讲解" class="headerlink" title="难点分析和讲解"></a>难点分析和讲解</h3><blockquote>
+<h4 id="一、GridView高度问题"><a href="#一、GridView高度问题" class="headerlink" title="一、GridView高度问题"></a>一、GridView高度问题</h4><h4 id="二、长按GridView某一项可以替换位置，最后一项“更多”不参与滑动与替换位置"><a href="#二、长按GridView某一项可以替换位置，最后一项“更多”不参与滑动与替换位置" class="headerlink" title="二、长按GridView某一项可以替换位置，最后一项“更多”不参与滑动与替换位置"></a>二、长按GridView某一项可以替换位置，最后一项“更多”不参与滑动与替换位置</h4><h4 id="三、GridView长按并滑动某一项时，滑动过程中与ScrollView和ViewPager冲突问题"><a href="#三、GridView长按并滑动某一项时，滑动过程中与ScrollView和ViewPager冲突问题" class="headerlink" title="三、GridView长按并滑动某一项时，滑动过程中与ScrollView和ViewPager冲突问题"></a>三、GridView长按并滑动某一项时，滑动过程中与ScrollView和ViewPager冲突问题</h4><h4 id="四、滑动GridView中某一项时，当滑动到顶部时ScrollView要能向下滚动；手指滑动到底部时要能项上滚动"><a href="#四、滑动GridView中某一项时，当滑动到顶部时ScrollView要能向下滚动；手指滑动到底部时要能项上滚动" class="headerlink" title="四、滑动GridView中某一项时，当滑动到顶部时ScrollView要能向下滚动；手指滑动到底部时要能项上滚动"></a>四、滑动GridView中某一项时，当滑动到顶部时ScrollView要能向下滚动；手指滑动到底部时要能项上滚动</h4></blockquote>
+<h3 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h3><h4 id="解决问题一"><a href="#解决问题一" class="headerlink" title="解决问题一"></a>解决问题一</h4><p>为了解决这一系列问题，我需要重写DragGridView继承GridView，第一步需要让DragGridView的每一项item占满整个视图，而gridview默认是限定高度的，解决办法是重写onMeasure，修改测量高度方法，如下</p>
+<pre><code> @Override
+protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    int expandSpec = View.MeasureSpec.makeMeasureSpec(
+            Integer.MAX_VALUE &gt;&gt; 2, View.MeasureSpec.AT_MOST);//1.精确模式（MeasureSpec.EXACTLY） 2.最大模式（MeasureSpec.AT_MOST） 3.未指定模式（MeasureSpec.UNSPECIFIED）
+    super.onMeasure(widthMeasureSpec, expandSpec);
+}
+</code></pre><h4 id="解决问题二"><a href="#解决问题二" class="headerlink" title="解决问题二"></a>解决问题二</h4><p>现在我们需要长按GridView某一项可以替换位置，思路是首先需要捕捉到长按事件，那么怎么算长按事件呢？手指快速的从item上划是不算的，手指按下然后很快离开这是点击事件也不能算长按。只有手指在item上按下并且停留在item上一定时间才能算长按。有了思路，下面看关键的几处代码：</p>
+<pre><code>private Handler mHandler = new Handler();
+//用来处理是否为长按的Runnable
+private Runnable mLongClickRunnable = new Runnable() {
+
+    @Override
+    public void run() {
+    //todo
+    }
+};
+
+@Override
+public boolean dispatchTouchEvent(MotionEvent ev) {
+    switch(ev.getAction()){
+        case MotionEvent.ACTION_DOWN:
+            //使用Handler延迟dragResponseMS执行mLongClickRunnable
+            mHandler.postDelayed(mLongClickRunnable, dragResponseMS);
+            break;
+        case MotionEvent.ACTION_MOVE:
+            //如果我们在按下的item上面移动，只要不超过item的边界我们就不移除mRunnable
+            if(!isTouchInItem(mStartDragItemView, moveX, moveY)){
+                mHandler.removeCallbacks(mLongClickRunnable);
+                mHandler.removeCallbacks(mScrollRunnable);
+            }
+
+            break;
+        case MotionEvent.ACTION_UP:
+        case MotionEvent.ACTION_CANCEL:
+            mHandler.removeCallbacks(mLongClickRunnable);
+            break;
+    }
+    return super.dispatchTouchEvent(ev);
+}
+</code></pre><blockquote>
+<p>解析： 定义一个Handler，重写ViewGroup(这里即DragGridView)分发事件方法dispatchTouchEvent()，在接受到ACTION DOWN事件时handler向消息队列会延迟发送一条消息，延迟时间就是长按时间的阀值，当接受到消息时说明长按事件已成立，如果手指在消息延迟期间滑走或移出则取消消息。</p>
+</blockquote>
+<p>有了长按事件如何滑动某一条item呢？如何替换两个item位置呢？<br>这里的解决思路是，当其中的某项假设是item1接收到长按事件后，先隐藏item1，在item1的位置上新建一个和item1长相位置都一样view假设叫它litem，手指滑动时对litem跟随滑动，接着重点来了，当手指滑动到item2区域后发出一个替换事件。这样我们就成功将两个item替换了位置并且用户体验比较好，代码片段如下：</p>
+<pre><code> //用来处理是否为长按的Runnable
+private Runnable mLongClickRunnable = new Runnable() {
+
+    @Override
+    public void run() {
+        if (onDragStartListener != null) {
+            onDragStartListener.onDragStart();
+        }
+        isDrag = true; //设置可以拖拽
+        mVibrator.vibrate(50); //震动一下
+        mStartDragItemView.setVisibility(View.INVISIBLE);//隐藏该item
+        //根据我们按下的点显示item镜像
+        createDragImage(mDragBitmap, mDownX, mDownY);
+
+
+    }
+};
+/**
+ * 设置替换回调接口
+ * @param onChangeListener
+ */
+public void setOnChangeListener(OnChangeListener onChangeListener){
+    this.onChangeListener = onChangeListener;
+}
+/**
+ * 创建拖动的镜像
+ * @param bitmap
+ * @param downX
+ *          按下的点相对父控件的X坐标
+ * @param downY
+ *          按下的点相对父控件的X坐标
+ */
+private void createDragImage(Bitmap bitmap, int downX , int downY){
+    mWindowLayoutParams = new WindowManager.LayoutParams();
+    mWindowLayoutParams.format = PixelFormat.TRANSLUCENT; //图片之外的其他地方透明
+    mWindowLayoutParams.gravity = Gravity.TOP | Gravity.LEFT;
+    mWindowLayoutParams.x = downX - mPoint2ItemLeft + mOffset2Left;
+    mWindowLayoutParams.y = downY - mPoint2ItemTop + mOffset2Top - mStatusHeight;
+    mWindowLayoutParams.alpha = 0.55f; //透明度
+    mWindowLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
+    mWindowLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+    mWindowLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+            | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE ;
+
+    mDragImageView = new ImageView(getContext());
+    mDragImageView.setImageBitmap(bitmap);
+    mWindowManager.addView(mDragImageView, mWindowLayoutParams);
+}
+@Override
+public boolean onTouchEvent(MotionEvent ev) {
+    if(isDrag &amp;&amp; mDragImageView != null){
+        switch(ev.getAction()){
+            case MotionEvent.ACTION_MOVE:
+                moveX = (int) ev.getX();
+                moveY = (int) ev.getY();
+                moveRawY = (int) ev.getRawY();
+                //拖动item
+                onDragItem(moveX, moveY);
+                break;
+            case MotionEvent.ACTION_UP:
+                onStopDrag();
+                isDrag = false;
+                break;
+        }
+        return true;
+    }
+    return super.onTouchEvent(ev);
+}
+</code></pre><blockquote>
+<p>解析：在接收到长按事件后会调用 createDragImage(mDragBitmap, mDownX, mDownY)方法，这是为了在item的位置上创建一个长相一样的view，当手指滑动时在onTouch()方法中监听move事件处理view的位置</p>
+</blockquote>
+<h4 id="解决问题三"><a href="#解决问题三" class="headerlink" title="解决问题三"></a>解决问题三</h4><p>为题三的解决比较简单，当gridview接收到长按事件后，处理ViewPager和ScrollView的方法一样<code>requestDisallowInterceptTouchEvent(false);</code> 这个方法是让ViewGroup本身不拦截触摸事件。当gridView滑动结束在<code>requestDisallowInterceptTouchEvent(true);</code></p>
+<h4 id="解决问题四"><a href="#解决问题四" class="headerlink" title="解决问题四"></a>解决问题四</h4><p>直接上源码</p>
+<pre><code>public class ControlScrollView extends ScrollView {
+
+private boolean isInControl = true;
+private int moveSpeed = 5;
+private final int msgWhat = 1;
+private final int time = 20;
+private ScrollState scrollState;
+
+public ControlScrollView(Context context) {
+    super(context);
+    init();
+}
+
+public ControlScrollView(Context context, AttributeSet attrs) {
+    super(context, attrs);
+    init();
+}
+
+@Override
+public boolean dispatchTouchEvent(MotionEvent ev) {
+    switch (ev.getAction()) {
+        case MotionEvent.ACTION_MOVE:/**/
+            if (!isInControl) {
+                if (ev.getY() &lt; 0) {
+                    if (!myHandler.hasMessages(msgWhat)) {
+                        Message msg = new Message();
+                        msg.arg1 = -1;
+                        msg.what = msgWhat;
+                        myHandler.sendMessageDelayed(msg, time);
+                    }
+                    return super.dispatchTouchEvent(ev);
+                } else if (ev.getY() &gt; getHeight()) {
+                    if (!myHandler.hasMessages(msgWhat)) {
+                        Message msg = new Message();
+                        msg.arg1 = 1;
+                        msg.what = msgWhat;
+                        myHandler.sendMessageDelayed(msg, time);
+                    }
+                    return super.dispatchTouchEvent(ev);
+                } else {
+                    myHandler.removeMessages(msgWhat);
+                }
+            } else {
+                myHandler.removeMessages(msgWhat);
+            }
+            break;
+        case MotionEvent.ACTION_UP:
+        case MotionEvent.ACTION_CANCEL:
+            if (scrollState != null) {
+                scrollState.stopTouch();
+            }
+            myHandler.removeMessages(msgWhat);
+            requestDisallowInterceptTouchEvent(false);
+            break;
+    }
+    return super.dispatchTouchEvent(ev);
+}
+
+
+@Override
+protected void onDetachedFromWindow() {
+    super.onDetachedFromWindow();
+    myHandler.removeMessages(msgWhat);
+}
+
+
+private void init() {
+    moveSpeed = ScreenUtils.dip2px(getContext(), moveSpeed);
+}
+
+public boolean isInControl() {
+    return isInControl;
+}
+
+public ScrollState getScrollState() {
+    return scrollState;
+}
+
+public void setScrollState(ScrollState scrollState) {
+    this.scrollState = scrollState;
+}
+
+public void setInControl(boolean inControl) {
+    isInControl = inControl;
+}
+
+private Handler myHandler = new Handler() {
+    @Override
+    public void dispatchMessage(Message msg) {
+        super.dispatchMessage(msg);
+        smoothScrollBy(0, moveSpeed * (msg.arg1 &gt; 0 ? 1 : -1));
+        Message msg1 = new Message();
+        msg1.what = msg.what;
+        msg1.arg1 = msg.arg1;
+        myHandler.sendMessageDelayed(msg1, time);
+    }
+};
+
+public interface ScrollState {
+    void stopTouch();
+}
+</code></pre><p>}</p>
+<blockquote>
+<p>解析：大致逻辑就是判断手指位置，超出边界发送消息对scrollview进行滚动</p>
+</blockquote>
+<h4 id="结束"><a href="#结束" class="headerlink" title="结束"></a>结束</h4><h5 id="源码地址-https-github-com-halibobo-TouchListenerConflict-1"><a href="#源码地址-https-github-com-halibobo-TouchListenerConflict-1" class="headerlink" title="源码地址 https://github.com/halibobo/TouchListenerConflict"></a>源码地址 <a href="https://github.com/halibobo/TouchListenerConflict" target="_blank" rel="external">https://github.com/halibobo/TouchListenerConflict</a></h5>
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wx.png" alt="da hei WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/zfb.png" alt="da hei Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/事件分发/" rel="tag">#事件分发</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/26/android声音检测仪---分贝仪/" rel="next" title="android声音检测仪---分贝仪">
+                <i class="fa fa-chevron-left"></i> android声音检测仪---分贝仪
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/06/03/结合支付宝和微信首页巩固android事件分发机制/"
+     data-title="结合支付宝和微信首页巩固android事件分发机制"
+     data-content=""
+     data-url="http://dahei.me/2016/06/03/结合支付宝和微信首页巩固android事件分发机制/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/06/03/结合支付宝和微信首页巩固android事件分发机制/"
+           data-title="结合支付宝和微信首页巩固android事件分发机制" data-url="http://dahei.me/2016/06/03/结合支付宝和微信首页巩固android事件分发机制/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="da hei" />
+          <p class="site-author-name" itemprop="name">da hei</p>
+          <p class="site-description motion-element" itemprop="description">谢谢访问</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">3</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/halibobo" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#结合支付宝和微信首页巩固android事件分发机制"><span class="nav-number">1.</span> <span class="nav-text">结合支付宝和微信首页巩固android事件分发机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#源码地址-https-github-com-halibobo-TouchListenerConflict"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">源码地址 https://github.com/halibobo/TouchListenerConflict</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#android的事件分发和处理方式"><span class="nav-number">1.1.</span> <span class="nav-text">android的事件分发和处理方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#demo布局"><span class="nav-number">1.1.1.</span> <span class="nav-text">demo布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#难点分析和讲解"><span class="nav-number">1.1.2.</span> <span class="nav-text">难点分析和讲解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#一、GridView高度问题"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">一、GridView高度问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#二、长按GridView某一项可以替换位置，最后一项“更多”不参与滑动与替换位置"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">二、长按GridView某一项可以替换位置，最后一项“更多”不参与滑动与替换位置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#三、GridView长按并滑动某一项时，滑动过程中与ScrollView和ViewPager冲突问题"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">三、GridView长按并滑动某一项时，滑动过程中与ScrollView和ViewPager冲突问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#四、滑动GridView中某一项时，当滑动到顶部时ScrollView要能向下滚动；手指滑动到底部时要能项上滚动"><span class="nav-number">1.1.2.4.</span> <span class="nav-text">四、滑动GridView中某一项时，当滑动到顶部时ScrollView要能向下滚动；手指滑动到底部时要能项上滚动</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解决问题"><span class="nav-number">1.1.3.</span> <span class="nav-text">解决问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#解决问题一"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">解决问题一</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解决问题二"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">解决问题二</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解决问题三"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">解决问题三</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解决问题四"><span class="nav-number">1.1.3.4.</span> <span class="nav-text">解决问题四</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#结束"><span class="nav-number">1.1.3.5.</span> <span class="nav-text">结束</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#源码地址-https-github-com-halibobo-TouchListenerConflict-1"><span class="nav-number">1.1.3.5.1.</span> <span class="nav-text">源码地址 https://github.com/halibobo/TouchListenerConflict</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">da hei</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"dahei"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("hy32kQOmUjM1nNNm6kWqXzx0-gzGzoHsz", "yQIEmBskkDTllPqvIfBdU0A9");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+</body>
+</html>
