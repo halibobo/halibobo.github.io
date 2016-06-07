@@ -94,7 +94,7 @@
 对android开发有一定了解的同学一定或多或少知道android的触摸事件分发，整个事件的分发消耗流程都可以通过看源码理解，下面通过讲解demo帮助加深事件分发的理解和在实战中的应用。首先直接上demo截">
 <meta property="og:image" content="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/touch_listener/1.gif">
 <meta property="og:image" content="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/touch_listener/border.png">
-<meta property="og:updated_time" content="2016-06-07T04:23:33.289Z">
+<meta property="og:updated_time" content="2016-06-07T04:33:52.238Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="结合支付宝和微信首页巩固android事件分发机制">
 <meta name="twitter:description" content="结合支付宝和微信首页巩固android事件分发机制源码地址 https://github.com/halibobo/TouchListenerConflictandroid的事件分发和处理方式
@@ -466,7 +466,7 @@ public boolean onTouchEvent(MotionEvent ev) {
 </code></pre><blockquote>
 <p>解析：在接收到长按事件后会调用 createDragImage(mDragBitmap, mDownX, mDownY)方法，这是为了在item的位置上创建一个长相一样的view，当手指滑动时在onTouch()方法中监听move事件处理view的位置</p>
 </blockquote>
-<h4 id="解决问题三"><a href="#解决问题三" class="headerlink" title="解决问题三"></a>解决问题三</h4><p>为题三的解决比较简单，当gridview接收到长按事件后，处理ViewPager和ScrollView的方法一样<code>requestDisallowInterceptTouchEvent(false);</code> 这个方法是让ViewGroup本身不拦截触摸事件。当gridView滑动结束在<code>requestDisallowInterceptTouchEvent(true);</code></p>
+<h4 id="解决问题三"><a href="#解决问题三" class="headerlink" title="解决问题三"></a>解决问题三</h4><p>为题三的解决比较简单，当gridview接收到长按事件后，处理ViewPager和ScrollView的方法一样<code>requestDisallowInterceptTouchEvent(true);</code> 这个方法是让ViewGroup本身不拦截触摸事件。当gridView滑动结束在<code>requestDisallowInterceptTouchEvent(false);</code></p>
 <h4 id="解决问题四"><a href="#解决问题四" class="headerlink" title="解决问题四"></a>解决问题四</h4><p>直接上源码</p>
 <pre><code>public class ControlScrollView extends ScrollView {
 
