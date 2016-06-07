@@ -263,364 +263,6 @@
             
               
                 
-                <a class="post-title-link" href="/2016/05/26/结合支付宝和微信首页巩固android事件分发机制/" itemprop="url">
-                  结合支付宝和微信首页巩固android事件分发机制
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-05-26T14:22:49+08:00" content="2016-05-26">
-              2016-05-26
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/05/26/结合支付宝和微信首页巩固android事件分发机制/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/05/26/结合支付宝和微信首页巩固android事件分发机制/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-             <span id="/2016/05/26/结合支付宝和微信首页巩固android事件分发机制/" class="leancloud_visitors" data-flag-title="结合支付宝和微信首页巩固android事件分发机制">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="结合支付宝和微信首页巩固android事件分发机制"><a href="#结合支付宝和微信首页巩固android事件分发机制" class="headerlink" title="结合支付宝和微信首页巩固android事件分发机制"></a>结合支付宝和微信首页巩固android事件分发机制</h1><h4 id="源码地址-https-github-com-halibobo-TouchListenerConflict"><a href="#源码地址-https-github-com-halibobo-TouchListenerConflict" class="headerlink" title="源码地址 https://github.com/halibobo/TouchListenerConflict"></a>源码地址 <a href="https://github.com/halibobo/TouchListenerConflict" target="_blank" rel="external">https://github.com/halibobo/TouchListenerConflict</a></h4><h2 id="android的事件分发和处理方式"><a href="#android的事件分发和处理方式" class="headerlink" title="android的事件分发和处理方式"></a>android的事件分发和处理方式</h2><blockquote>
-<p>对android开发有一定了解的同学一定或多或少知道android的触摸事件分发，整个事件的分发消耗流程都可以通过看源码理解，下面通过讲解demo帮助加深事件分发的理解和在实战中的应用。首先直接上demo截图：</p>
-</blockquote>
-<p> <img src="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/touch_listener/1.gif" alt="enter image description here"></p>
-<h3 id="demo布局"><a href="#demo布局" class="headerlink" title="demo布局"></a>demo布局</h3><blockquote>
-<p>整个首页布局是这样的，最外层是ViewPager，里面包含四个子功能，每个子功能的视图都是一个Fragment。“功能1”里的列表项是一个GridView，此gridview外层是带有LinearLayout的ScrollView。<br>布局如下<br><img src="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/touch_listener/border.png" alt="enter image description here"></p>
-</blockquote>
-<h3 id="难点分析和讲解"><a href="#难点分析和讲解" class="headerlink" title="难点分析和讲解"></a>难点分析和讲解</h3><blockquote>
-<h4 id="一、GridView高度问题"><a href="#一、GridView高度问题" class="headerlink" title="一、GridView高度问题"></a>一、GridView高度问题</h4><h4 id="二、长按GridView某一项可以替换位置，最后一项“更多”不参与滑动与替换位置"><a href="#二、长按GridView某一项可以替换位置，最后一项“更多”不参与滑动与替换位置" class="headerlink" title="二、长按GridView某一项可以替换位置，最后一项“更多”不参与滑动与替换位置"></a>二、长按GridView某一项可以替换位置，最后一项“更多”不参与滑动与替换位置</h4><h4 id="三、GridView长按并滑动某一项时，滑动过程中与ScrollView和ViewPager冲突问题"><a href="#三、GridView长按并滑动某一项时，滑动过程中与ScrollView和ViewPager冲突问题" class="headerlink" title="三、GridView长按并滑动某一项时，滑动过程中与ScrollView和ViewPager冲突问题"></a>三、GridView长按并滑动某一项时，滑动过程中与ScrollView和ViewPager冲突问题</h4><h4 id="四、滑动GridView中某一项时，当滑动到顶部时ScrollView要能向下滚动；手指滑动到底部时要能项上滚动"><a href="#四、滑动GridView中某一项时，当滑动到顶部时ScrollView要能向下滚动；手指滑动到底部时要能项上滚动" class="headerlink" title="四、滑动GridView中某一项时，当滑动到顶部时ScrollView要能向下滚动；手指滑动到底部时要能项上滚动"></a>四、滑动GridView中某一项时，当滑动到顶部时ScrollView要能向下滚动；手指滑动到底部时要能项上滚动</h4></blockquote>
-<h3 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h3><h4 id="解决问题一"><a href="#解决问题一" class="headerlink" title="解决问题一"></a>解决问题一</h4><p>为了解决这一系列问题，我需要重写DragGridView继承GridView，第一步需要让DragGridView的每一项item占满整个视图，而gridview默认是限定高度的，解决办法是重写onMeasure，修改测量高度方法，如下</p>
-<pre><code> @Override
-protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    int expandSpec = View.MeasureSpec.makeMeasureSpec(
-            Integer.MAX_VALUE &gt;&gt; 2, View.MeasureSpec.AT_MOST);//1.精确模式（MeasureSpec.EXACTLY） 2.最大模式（MeasureSpec.AT_MOST） 3.未指定模式（MeasureSpec.UNSPECIFIED）
-    super.onMeasure(widthMeasureSpec, expandSpec);
-}
-</code></pre><h4 id="解决问题二"><a href="#解决问题二" class="headerlink" title="解决问题二"></a>解决问题二</h4><p>现在我们需要长按GridView某一项可以替换位置，思路是首先需要捕捉到长按事件，那么怎么算长按事件呢？手指快速的从item上划是不算的，手指按下然后很快离开这是点击事件也不能算长按。只有手指在item上按下并且停留在item上一定时间才能算长按。有了思路，下面看关键的几处代码：</p>
-<pre><code>private Handler mHandler = new Handler();
-//用来处理是否为长按的Runnable
-private Runnable mLongClickRunnable = new Runnable() {
-
-    @Override
-    public void run() {
-    //todo
-    }
-};
-
-@Override
-public boolean dispatchTouchEvent(MotionEvent ev) {
-    switch(ev.getAction()){
-        case MotionEvent.ACTION_DOWN:
-            //使用Handler延迟dragResponseMS执行mLongClickRunnable
-            mHandler.postDelayed(mLongClickRunnable, dragResponseMS);
-            break;
-        case MotionEvent.ACTION_MOVE:
-            //如果我们在按下的item上面移动，只要不超过item的边界我们就不移除mRunnable
-            if(!isTouchInItem(mStartDragItemView, moveX, moveY)){
-                mHandler.removeCallbacks(mLongClickRunnable);
-                mHandler.removeCallbacks(mScrollRunnable);
-            }
-
-            break;
-        case MotionEvent.ACTION_UP:
-        case MotionEvent.ACTION_CANCEL:
-            mHandler.removeCallbacks(mLongClickRunnable);
-            break;
-    }
-    return super.dispatchTouchEvent(ev);
-}
-</code></pre><blockquote>
-<p>解析： 定义一个Handler，重写ViewGroup(这里即DragGridView)分发事件方法dispatchTouchEvent()，在接受到ACTION DOWN事件时handler向消息队列会延迟发送一条消息，延迟时间就是长按时间的阀值，当接受到消息时说明长按事件已成立，如果手指在消息延迟期间滑走或移出则取消消息。</p>
-</blockquote>
-<p>有了长按事件如何滑动某一条item呢？如何替换两个item位置呢？<br>这里的解决思路是，当其中的某项假设是item1接收到长按事件后，先隐藏item1，在item1的位置上新建一个和item1长相位置都一样view假设叫它litem，手指滑动时对litem跟随滑动，接着重点来了，当手指滑动到item2区域后发出一个替换事件。这样我们就成功将两个item替换了位置并且用户体验比较好，代码片段如下：</p>
-<pre><code> //用来处理是否为长按的Runnable
-private Runnable mLongClickRunnable = new Runnable() {
-
-    @Override
-    public void run() {
-        if (onDragStartListener != null) {
-            onDragStartListener.onDragStart();
-        }
-        isDrag = true; //设置可以拖拽
-        mVibrator.vibrate(50); //震动一下
-        mStartDragItemView.setVisibility(View.INVISIBLE);//隐藏该item
-        //根据我们按下的点显示item镜像
-        createDragImage(mDragBitmap, mDownX, mDownY);
-
-
-    }
-};
-/**
- * 设置替换回调接口
- * @param onChangeListener
- */
-public void setOnChangeListener(OnChangeListener onChangeListener){
-    this.onChangeListener = onChangeListener;
-}
-/**
- * 创建拖动的镜像
- * @param bitmap
- * @param downX
- *          按下的点相对父控件的X坐标
- * @param downY
- *          按下的点相对父控件的X坐标
- */
-private void createDragImage(Bitmap bitmap, int downX , int downY){
-    mWindowLayoutParams = new WindowManager.LayoutParams();
-    mWindowLayoutParams.format = PixelFormat.TRANSLUCENT; //图片之外的其他地方透明
-    mWindowLayoutParams.gravity = Gravity.TOP | Gravity.LEFT;
-    mWindowLayoutParams.x = downX - mPoint2ItemLeft + mOffset2Left;
-    mWindowLayoutParams.y = downY - mPoint2ItemTop + mOffset2Top - mStatusHeight;
-    mWindowLayoutParams.alpha = 0.55f; //透明度
-    mWindowLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
-    mWindowLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-    mWindowLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-            | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE ;
-
-    mDragImageView = new ImageView(getContext());
-    mDragImageView.setImageBitmap(bitmap);
-    mWindowManager.addView(mDragImageView, mWindowLayoutParams);
-}
-@Override
-public boolean onTouchEvent(MotionEvent ev) {
-    if(isDrag &amp;&amp; mDragImageView != null){
-        switch(ev.getAction()){
-            case MotionEvent.ACTION_MOVE:
-                moveX = (int) ev.getX();
-                moveY = (int) ev.getY();
-                moveRawY = (int) ev.getRawY();
-                //拖动item
-                onDragItem(moveX, moveY);
-                break;
-            case MotionEvent.ACTION_UP:
-                onStopDrag();
-                isDrag = false;
-                break;
-        }
-        return true;
-    }
-    return super.onTouchEvent(ev);
-}
-</code></pre><blockquote>
-<p>解析：在接收到长按事件后会调用 createDragImage(mDragBitmap, mDownX, mDownY)方法，这是为了在item的位置上创建一个长相一样的view，当手指滑动时在onTouch()方法中监听move事件处理view的位置</p>
-</blockquote>
-<h4 id="解决问题三"><a href="#解决问题三" class="headerlink" title="解决问题三"></a>解决问题三</h4><p>为题三的解决比较简单，当gridview接收到长按事件后，处理ViewPager和ScrollView的方法一样<code>requestDisallowInterceptTouchEvent(false);</code> 这个方法是让ViewGroup本身不拦截触摸事件。当gridView滑动结束在<code>requestDisallowInterceptTouchEvent(true);</code></p>
-<h4 id="解决问题四"><a href="#解决问题四" class="headerlink" title="解决问题四"></a>解决问题四</h4><p>直接上源码</p>
-<pre><code>public class ControlScrollView extends ScrollView {
-
-private boolean isInControl = true;
-private int moveSpeed = 5;
-private final int msgWhat = 1;
-private final int time = 20;
-private ScrollState scrollState;
-
-public ControlScrollView(Context context) {
-    super(context);
-    init();
-}
-
-public ControlScrollView(Context context, AttributeSet attrs) {
-    super(context, attrs);
-    init();
-}
-
-@Override
-public boolean dispatchTouchEvent(MotionEvent ev) {
-    switch (ev.getAction()) {
-        case MotionEvent.ACTION_MOVE:/**/
-            if (!isInControl) {
-                if (ev.getY() &lt; 0) {
-                    if (!myHandler.hasMessages(msgWhat)) {
-                        Message msg = new Message();
-                        msg.arg1 = -1;
-                        msg.what = msgWhat;
-                        myHandler.sendMessageDelayed(msg, time);
-                    }
-                    return super.dispatchTouchEvent(ev);
-                } else if (ev.getY() &gt; getHeight()) {
-                    if (!myHandler.hasMessages(msgWhat)) {
-                        Message msg = new Message();
-                        msg.arg1 = 1;
-                        msg.what = msgWhat;
-                        myHandler.sendMessageDelayed(msg, time);
-                    }
-                    return super.dispatchTouchEvent(ev);
-                } else {
-                    myHandler.removeMessages(msgWhat);
-                }
-            } else {
-                myHandler.removeMessages(msgWhat);
-            }
-            break;
-        case MotionEvent.ACTION_UP:
-        case MotionEvent.ACTION_CANCEL:
-            if (scrollState != null) {
-                scrollState.stopTouch();
-            }
-            myHandler.removeMessages(msgWhat);
-            requestDisallowInterceptTouchEvent(false);
-            break;
-    }
-    return super.dispatchTouchEvent(ev);
-}
-
-
-@Override
-protected void onDetachedFromWindow() {
-    super.onDetachedFromWindow();
-    myHandler.removeMessages(msgWhat);
-}
-
-
-private void init() {
-    moveSpeed = ScreenUtils.dip2px(getContext(), moveSpeed);
-}
-
-public boolean isInControl() {
-    return isInControl;
-}
-
-public ScrollState getScrollState() {
-    return scrollState;
-}
-
-public void setScrollState(ScrollState scrollState) {
-    this.scrollState = scrollState;
-}
-
-public void setInControl(boolean inControl) {
-    isInControl = inControl;
-}
-
-private Handler myHandler = new Handler() {
-    @Override
-    public void dispatchMessage(Message msg) {
-        super.dispatchMessage(msg);
-        smoothScrollBy(0, moveSpeed * (msg.arg1 &gt; 0 ? 1 : -1));
-        Message msg1 = new Message();
-        msg1.what = msg.what;
-        msg1.arg1 = msg.arg1;
-        myHandler.sendMessageDelayed(msg1, time);
-    }
-};
-
-public interface ScrollState {
-    void stopTouch();
-}
-</code></pre><p>}</p>
-<blockquote>
-<p>解析：大致逻辑就是判断手指位置，超出边界发送消息对scrollview进行滚动</p>
-</blockquote>
-<h4 id="结束"><a href="#结束" class="headerlink" title="结束"></a>结束</h4><h5 id="源码地址-https-github-com-halibobo-TouchListenerConflict-1"><a href="#源码地址-https-github-com-halibobo-TouchListenerConflict-1" class="headerlink" title="源码地址 https://github.com/halibobo/TouchListenerConflict"></a>源码地址 <a href="https://github.com/halibobo/TouchListenerConflict" target="_blank" rel="external">https://github.com/halibobo/TouchListenerConflict</a></h5>
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
                 <a class="post-title-link" href="/2016/05/26/android声音检测仪---分贝仪/" itemprop="url">
                   android声音检测仪---分贝仪
                 </a>
@@ -698,131 +340,154 @@ public interface ScrollState {
 
       
         
-          
-            <h1 id="android声音检测仪—分贝仪"><a href="#android声音检测仪—分贝仪" class="headerlink" title="android声音检测仪—分贝仪"></a>android声音检测仪—分贝仪</h1><p>源码下载地址：<a href="https://github.com/halibobo/SoundMeter" target="_blank" rel="external">https://github.com/halibobo/SoundMeter</a></p>
+          <h1 id="android声音检测仪—分贝仪"><a href="#android声音检测仪—分贝仪" class="headerlink" title="android声音检测仪—分贝仪"></a>android声音检测仪—分贝仪</h1><p>源码下载地址：<a href="https://github.com/halibobo/SoundMeter">https://github.com/halibobo/SoundMeter</a></p>
 <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>最近小区旁边工地施工，今一大早就被工地传来的guang！guang！…吵醒了。很响很响的那种，你们肯定会问具体有多响？具体要多响？怎么描述呢？顿时就萌生出开发一款记录声音响度的app，忙活了一下午于是就出了这个声音检测仪</p>
 <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>android端的声音检测程序，实时获取当前周围环境的声压级，也就是平常所说的分贝值</p>
 <p><img src="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/sound_meter/sound.gif" alt="enter image description here"></p>
 <h3 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h3><p>声音采集利用系统的MediaRecorder</p>
-<pre><code>/**
- * 录音
- * @return 是否成功开始录音
- */
-public boolean startRecorder(){
-    if (myRecAudioFile == null) {
-        return false;
-    }
-    try {
-        mMediaRecorder = new MediaRecorder();
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/05/26/android声音检测仪---分贝仪/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
 
-        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        mMediaRecorder.setOutputFile(myRecAudioFile.getAbsolutePath());
+    <div>
+      
+    </div>
 
-        mMediaRecorder.prepare();
-        mMediaRecorder.start();
-        isRecording = true;
-        return true;
-    } catch(IOException exception) {
-        mMediaRecorder.reset();
-        mMediaRecorder.release();
-        mMediaRecorder = null;
-        isRecording = false ;
-        exception.printStackTrace();
-    }catch(IllegalStateException e){
-        stopRecording();
-        e.printStackTrace();
-        isRecording = false ;
-    }
-    return false;
-}
-  /**
-  * 获取声压值
-  */
- public float getMaxAmplitude() {
-     if (mMediaRecorder != null) {
-         try {
-             return mMediaRecorder.getMaxAmplitude();
-         } catch (IllegalArgumentException e) {
-             e.printStackTrace();
-             return 0;
-         }
-     } else {
-         return 5;
-     }
- }
-</code></pre><p>在MainActivity中开启一个线程定时获取声压值并转为分贝</p>
-<pre><code>private void startListenAudio() {
-    thread = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            while (isThreadRun) {
-                try {
-                    if(bListener) {
-                        volume = mRecorder.getMaxAmplitude();  //获取声压值
-                        if(volume &gt; 0 &amp;&amp; volume &lt; 1000000) {
-                            World.setDbCount(20 * (float)(Math.log10(volume)));  //将声压值转为分贝值
-                        }
-                    }
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    bListener = false;
-                }
-            }
-        }
-    });
-    thread.start();
-}
-</code></pre><p>自定义显示分贝值得大圆盘View  取名SoundDiscView</p>
-<pre><code>private float scaleWidth, scaleHeight;
-private int newWidth, newHeight;
-private Matrix mMatrix = new Matrix();
-private Bitmap indicatorBitmap;
-private Paint paint = new Paint();
-static final long  ANIMATION_INTERVAL = 100;
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
 
 
-private void init() {
-    Bitmap myBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.noise_index);
-    int bitmapWidth = myBitmap.getWidth();
-    int bitmapHeight = myBitmap.getHeight();
-    newWidth = getWidth();
-    newHeight = getHeight();
-    scaleWidth = ((float) newWidth) /(float) bitmapWidth;  // 获取缩放比例
-    scaleHeight = ((float) newHeight) /(float) bitmapHeight;  //获取缩放比例
-    mMatrix.postScale(scaleWidth, scaleHeight);   //设置mMatrix的缩放比例
-    indicatorBitmap = Bitmap.createBitmap(myBitmap, 0, 0, bitmapWidth, bitmapHeight, mMatrix,true);  //获取同等和背景宽高的指针图的bitmap
+    
+      
 
-    paint = new Paint();
-    paint.setTextSize(55);
-    paint.setAntiAlias(true);
-    paint.setTextAlign(Paint.Align.CENTER);  //抗锯齿
-    paint.setColor(Color.WHITE);
-}
+  
+  
 
+  
+  
+  
 
-@Override
-protected void onDraw(Canvas canvas) {
-    super.onDraw(canvas);
-    currentAngle = getAngle(World.dbCount); //获取指针应该显示的角度
-    mMatrix.setRotate(getAngle(World.dbCount), newWidth / 2, newHeight * 215 / 460);   //片相对位置
-    canvas.drawBitmap(indicatorBitmap, mMatrix, paint);
-    postInvalidateDelayed(ANIMATION_INTERVAL);
-    canvas.drawText((int)World.dbCount+&quot; DB&quot;, newWidth/2,newHeight*36/46, paint); //图片相对位置
-}
-</code></pre><p>运行发现指针滑动的太突兀，做个缓慢过度</p>
-<pre><code>public static float dbCount = 40;
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
 
-private static float lastDbCount = dbCount;
-public static void setDbCount(float dbValue) {
-    dbCount = lastDbCount + (dbValue - lastDbCount) * 0.2f; 
-    lastDbCount = dbCount;
-}
-</code></pre><h3 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h3><p>这里的分贝值是手机系统录音时获取的，手机厂商都对这个值设置了上限而且手机厂商之间都是有差别的，所以获取声音的分贝值会有点偏差。但是最终运行起来的效果还是很满意的。下面附上源码<br><a href="https://github.com/halibobo/SoundMeter" target="_blank" rel="external">源码下载地址</a></p>
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/05/26/结合支付宝和微信首页巩固android事件分发机制/" itemprop="url">
+                  结合支付宝和微信首页巩固android事件分发机制
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-05-26T14:22:49+08:00" content="2016-05-26">
+              2016-05-26
+            </time>
+          </span>
 
           
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/05/26/结合支付宝和微信首页巩固android事件分发机制/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/05/26/结合支付宝和微信首页巩固android事件分发机制/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/05/26/结合支付宝和微信首页巩固android事件分发机制/" class="leancloud_visitors" data-flag-title="结合支付宝和微信首页巩固android事件分发机制">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="结合支付宝和微信首页巩固android事件分发机制"><a href="#结合支付宝和微信首页巩固android事件分发机制" class="headerlink" title="结合支付宝和微信首页巩固android事件分发机制"></a>结合支付宝和微信首页巩固android事件分发机制</h1><h4 id="源码地址-https-github-com-halibobo-TouchListenerConflict"><a href="#源码地址-https-github-com-halibobo-TouchListenerConflict" class="headerlink" title="源码地址 https://github.com/halibobo/TouchListenerConflict"></a>源码地址 <a href="https://github.com/halibobo/TouchListenerConflict">https://github.com/halibobo/TouchListenerConflict</a></h4><h2 id="android的事件分发和处理方式"><a href="#android的事件分发和处理方式" class="headerlink" title="android的事件分发和处理方式"></a>android的事件分发和处理方式</h2><blockquote>
+<p>对android开发有一定了解的同学一定或多或少知道android的触摸事件分发，整个事件的分发消耗流程都可以通过看源码理解，下面通过讲解demo帮助加深事件分发的理解和在实战中的应用。首先直接上demo截图：</p>
+</blockquote>
+<p> <img src="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/touch_listener/1.gif" alt="enter image description here"></p>
+<h3 id="demo布局"><a href="#demo布局" class="headerlink" title="demo布局"></a>demo布局</h3><blockquote>
+<p>整个首页布局是这样的，最外层是ViewPager，里面包含四个子功能，每个子功能的视图都是一个Fragment。“功能1”里的列表项是一个GridView，此gridview外层是带有LinearLayout的ScrollView。<br>布局如下<br><img src="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/touch_listener/border.png" alt="enter image description here"></p>
+</blockquote>
+<h3 id="难点分析和讲解"><a href="#难点分析和讲解" class="headerlink" title="难点分析和讲解"></a>难点分析和讲解</h3><blockquote>
+<h4 id="一、GridView高度问题"><a href="#一、GridView高度问题" class="headerlink" title="一、GridView高度问题"></a>一、GridView高度问题</h4><h4 id="二、长按GridView某一项可以替换位置，最后一项“更多”不参与滑动与替换位置"><a href="#二、长按GridView某一项可以替换位置，最后一项“更多”不参与滑动与替换位置" class="headerlink" title="二、长按GridView某一项可以替换位置，最后一项“更多”不参与滑动与替换位置"></a>二、长按GridView某一项可以替换位置，最后一项“更多”不参与滑动与替换位置</h4><h4 id="三、GridView长按并滑动某一项时，滑动过程中与ScrollView和ViewPager冲突问题"><a href="#三、GridView长按并滑动某一项时，滑动过程中与ScrollView和ViewPager冲突问题" class="headerlink" title="三、GridView长按并滑动某一项时，滑动过程中与ScrollView和ViewPager冲突问题"></a>三、GridView长按并滑动某一项时，滑动过程中与ScrollView和ViewPager冲突问题</h4><h4 id="四、滑动GridView中某一项时，当滑动到顶部时ScrollView要能向下滚动；手指滑动到底部时要能项上滚动"><a href="#四、滑动GridView中某一项时，当滑动到顶部时ScrollView要能向下滚动；手指滑动到底部时要能项上滚动" class="headerlink" title="四、滑动GridView中某一项时，当滑动到顶部时ScrollView要能向下滚动；手指滑动到底部时要能项上滚动"></a>四、滑动GridView中某一项时，当滑动到顶部时ScrollView要能向下滚动；手指滑动到底部时要能项上滚动</h4></blockquote>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/05/26/结合支付宝和微信首页巩固android事件分发机制/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -947,8 +612,7 @@ public static void setDbCount(float dbValue) {
 
       
         
-          
-            <h2 id="设计模式之策略模式"><a href="#设计模式之策略模式" class="headerlink" title="设计模式之策略模式"></a>设计模式之策略模式</h2><h4 id="今天介绍下策略模式，直接先上UML图"><a href="#今天介绍下策略模式，直接先上UML图" class="headerlink" title="今天介绍下策略模式，直接先上UML图"></a>今天介绍下策略模式，直接先上UML图</h4><p><img src="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/hexo_strategy/strategy.jpg" alt="enter image description here"></p>
+          <h2 id="设计模式之策略模式"><a href="#设计模式之策略模式" class="headerlink" title="设计模式之策略模式"></a>设计模式之策略模式</h2><h4 id="今天介绍下策略模式，直接先上UML图"><a href="#今天介绍下策略模式，直接先上UML图" class="headerlink" title="今天介绍下策略模式，直接先上UML图"></a>今天介绍下策略模式，直接先上UML图</h4><p><img src="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/hexo_strategy/strategy.jpg" alt="enter image description here"></p>
 <h4 id="策略模式的概念"><a href="#策略模式的概念" class="headerlink" title="策略模式的概念"></a>策略模式的概念</h4><blockquote>
 <p>The Strategy Pattern defines a family of algorithms,encapsulates each one,and makes them interchangeable. Strategy lets the algorithm vary independently from clients that use it.<br>–（翻译）– 定义一系列的算法,把它们一个个封装起来, 并且使它们可相互替换。策略模式使得算法可独立于使用它的客户而变化。</p>
 <p>1、需要使用ConcreteStrategy提供的算法。<br>2、 内部维护一个Strategy的实例。<br>3、 负责动态设置运行时Strategy具体的实现算法。<br>4、负责跟Strategy之间的交互和数据传递。</p>
@@ -956,28 +620,11 @@ public static void setDbCount(float dbValue) {
 <h4 id="策略模式的组成"><a href="#策略模式的组成" class="headerlink" title="策略模式的组成"></a>策略模式的组成</h4><blockquote>
 <p>— Strategy（抽象策略类）： 通常由一个接口或者抽象类实现。<br>— ConcreteStrategy（具体策略角色）：包装了相关的算法和行为。一般有多个<br>— Context（环境角色）：持有一个策略类的引用，最终给客户端调用。</p>
 </blockquote>
-<h4 id="策略模式的应用场景"><a href="#策略模式的应用场景" class="headerlink" title="策略模式的应用场景"></a>策略模式的应用场景</h4><blockquote>
-<p>定义一系列的算法,把它们一个个封装起来, 并且使它们可相互替换。策略模式使得算法可独立于使用它的客户而变化。实际开发中用途，比如google开源的android网络框架volley，volley的超时重发重发机制就使用到了典型策略模式，看源码<br> RetryPolicy.java  请求重试策略类，定义了三个接口<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">package com.android.volley;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 请求重试策略类</span><br><span class="line"> * 此类属于抽象策略类对应Strategy</span><br><span class="line"> */</span><br><span class="line">public interface RetryPolicy &#123;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 超时时间</span><br><span class="line">     */</span><br><span class="line">    public int getCurrentTimeout();</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 重试次数</span><br><span class="line">     */</span><br><span class="line">    public int getCurrentRetryCount();</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 针对错误异常的处理</span><br><span class="line">     */</span><br><span class="line">    public void retry(VolleyError error) throws VolleyError;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-</blockquote>
-<p>DefaultRetryPolicy.java 默认重试策略，继承了RetryPolicy ，具体实现了接口,我截取了部分代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">public class DefaultRetryPolicy implements RetryPolicy &#123;</span><br><span class="line">   ...</span><br><span class="line">    public static final int DEFAULT_TIMEOUT_MS = 2500;</span><br><span class="line">	private int mCurrentTimeoutMs;</span><br><span class="line">    /** The default number of retries */</span><br><span class="line">    public static final int DEFAULT_MAX_RETRIES = 0;</span><br><span class="line"></span><br><span class="line">    /** The default backoff multiplier */</span><br><span class="line">    public static final float DEFAULT_BACKOFF_MULT = 1f;</span><br><span class="line">    </span><br><span class="line">   ...//代表省略掉的代码</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public int getCurrentTimeout() &#123;</span><br><span class="line">        return mCurrentTimeoutMs;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public int getCurrentRetryCount() &#123;</span><br><span class="line">        return mCurrentRetryCount;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void retry(VolleyError error) throws VolleyError &#123;</span><br><span class="line">        mCurrentRetryCount++;</span><br><span class="line">        mCurrentTimeoutMs += (mCurrentTimeoutMs * mBackoffMultiplier);</span><br><span class="line">        if (!hasAttemptRemaining()) &#123;</span><br><span class="line">            throw error;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>Request.java 请求类，持有一个抽象策略类RetryPolicy 的引用，最终给客户端调用。截取部分代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">public abstract class Request&lt;T&gt; implements Comparable&lt;Request&lt;T&gt;&gt; &#123;</span><br><span class="line">	 private RetryPolicy mRetryPolicy; //持有策略类的引用</span><br><span class="line">	 </span><br><span class="line">	 ...</span><br><span class="line">	 </span><br><span class="line">	public Request(int method, String url, Response.ErrorListener listener) &#123;</span><br><span class="line">        mMethod = method;</span><br><span class="line">        mUrl = url;</span><br><span class="line">        mIdentifier = createIdentifier(method, url);</span><br><span class="line">        mErrorListener = listener;</span><br><span class="line">        setRetryPolicy(new DefaultRetryPolicy());  //设置策略类</span><br><span class="line"></span><br><span class="line">        mDefaultTrafficStatsTag = findDefaultTrafficStatsTag(url);</span><br><span class="line">    &#125;</span><br><span class="line">	...</span><br><span class="line">	</span><br><span class="line">	 public Request&lt;?&gt; setRetryPolicy(RetryPolicy retryPolicy) &#123;</span><br><span class="line">        mRetryPolicy = retryPolicy;</span><br><span class="line">        return this;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line">	</span><br><span class="line">	public final int getTimeoutMs() &#123;</span><br><span class="line">        return mRetryPolicy.getCurrentTimeout();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>BasicNetwork.java 网络处理类，处理Request，使用到了对应的重试策略，截取部分代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">*遇到异常请求使用到了策略类的getTimeoutMs()方法</span><br><span class="line">*/</span><br><span class="line">private static void attemptRetryOnException(String logPrefix, Request&lt;?&gt; request,</span><br><span class="line">            VolleyError exception) throws VolleyError &#123;</span><br><span class="line">        RetryPolicy retryPolicy = request.getRetryPolicy();</span><br><span class="line">        int oldTimeout = request.getTimeoutMs();</span><br><span class="line"></span><br><span class="line">        try &#123;</span><br><span class="line">            retryPolicy.retry(exception);</span><br><span class="line">        &#125; catch (VolleyError e) &#123;</span><br><span class="line">            request.addMarker(</span><br><span class="line">                    String.format(&quot;%s-timeout-giveup [timeout=%s]&quot;, logPrefix, oldTimeout));</span><br><span class="line">            throw e;</span><br><span class="line">        &#125;</span><br><span class="line">        request.addMarker(String.format(&quot;%s-retry [timeout=%s]&quot;, logPrefix, oldTimeout));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line">* 网速慢，获取重试策略的重试次数getCurrentRetryCount</span><br><span class="line">*/</span><br><span class="line"> private void logSlowRequests(long requestLifetime, Request&lt;?&gt; request,</span><br><span class="line">            byte[] responseContents, StatusLine statusLine) &#123;</span><br><span class="line">        if (DEBUG || requestLifetime &gt; SLOW_REQUEST_THRESHOLD_MS) &#123;</span><br><span class="line">            VolleyLog.d(&quot;HTTP response for request=&lt;%s&gt; [lifetime=%d], [size=%s], &quot; +</span><br><span class="line">                    &quot;[rc=%d], [retryCount=%s]&quot;, request, requestLifetime,</span><br><span class="line">                    responseContents != null ? responseContents.length : &quot;null&quot;,</span><br><span class="line">                    statusLine.getStatusCode(), request.getRetryPolicy().getCurrentRetryCount());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"> private static void attemptRetryOnException(String logPrefix, Request&lt;?&gt; request,</span><br><span class="line">            VolleyError exception) throws VolleyError &#123;</span><br><span class="line">        RetryPolicy retryPolicy = request.getRetryPolicy();</span><br><span class="line">        int oldTimeout = request.getTimeoutMs();</span><br><span class="line"></span><br><span class="line">        try &#123;</span><br><span class="line">            retryPolicy.retry(exception);</span><br><span class="line">        &#125; catch (VolleyError e) &#123;</span><br><span class="line">            request.addMarker(</span><br><span class="line">                    String.format(&quot;%s-timeout-giveup [timeout=%s]&quot;, logPrefix, oldTimeout));</span><br><span class="line">            throw e;</span><br><span class="line">        &#125;</span><br><span class="line">        request.addMarker(String.format(&quot;%s-retry [timeout=%s]&quot;, logPrefix, oldTimeout));</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
-<p>实际使用中，我们可以自定义自己的策略继承RetryPolicy，这样就可以按照我们自己请求策略执行。</p>
-<p>下面介绍一个比较简单的实例</p>
-<h4 id="自定义简单的策略模式实例"><a href="#自定义简单的策略模式实例" class="headerlink" title="自定义简单的策略模式实例"></a>自定义简单的策略模式实例</h4><h5 id="商品实现针对不同等级会员显示对应的会员价，比如一本书原价100元，一级会员打97折，三级会员打8折"><a href="#商品实现针对不同等级会员显示对应的会员价，比如一本书原价100元，一级会员打97折，三级会员打8折" class="headerlink" title="商品实现针对不同等级会员显示对应的会员价，比如一本书原价100元，一级会员打97折，三级会员打8折"></a>商品实现针对不同等级会员显示对应的会员价，比如一本书原价100元，一级会员打97折，三级会员打8折</h5><p>PriceStrategy.java，策略类，可以使抽象类或接口，定义算法的公共接口，</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 定义一个计算价格的接口</span><br><span class="line"> * 它属于抽象策略类</span><br><span class="line"> * @author su</span><br><span class="line"> */</span><br><span class="line">public interface PriceStrategy &#123;</span><br><span class="line">	double priceStrategyInterface(double price);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>SuperVipStrategy.java，超级会员算法，打八折，继承PriceStrategy<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 超级会员类</span><br><span class="line"> * 它属于具体策略类，继承了计算价格接口</span><br><span class="line"> * @author su</span><br><span class="line"> *</span><br><span class="line"> */</span><br><span class="line">public class SuperVipStrategy implements PriceStrategy &#123;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public double priceStrategyInterface(double price) &#123;</span><br><span class="line">		return price * 0.8; //打八折</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>OneVipStrategy.java，一级会员算法，打九七折，继承PriceStrategy<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 一级会员类</span><br><span class="line"> * 它属于具体策略类</span><br><span class="line"> * @author su</span><br><span class="line"> *</span><br><span class="line"> */</span><br><span class="line">public class OneVipStrategy implements PriceStrategy &#123;</span><br><span class="line">	@Override</span><br><span class="line">	public double priceStrategyInterface(double price) &#123;</span><br><span class="line">		return 0.97 * price; //打九七折</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>ThreeVipStrategy.java，三级会员算法，打九五折，继承PriceStrategy<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 三级会员商品类</span><br><span class="line"> * 它属于具体策略类</span><br><span class="line"> * @author su</span><br><span class="line"> */</span><br><span class="line">public class ThreeVipStrategy implements PriceStrategy &#123;</span><br><span class="line">	@Override</span><br><span class="line">	public double priceStrategyInterface(double price) &#123;</span><br><span class="line">		return 0.95 * price; //九五折</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>Price.java 上下文环境，持有PriceStrategy 的引用。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 环境角色</span><br><span class="line"> * @author su</span><br><span class="line"> *</span><br><span class="line"> */</span><br><span class="line">public class Price &#123;</span><br><span class="line">	private PriceStrategy priceStrategy;</span><br><span class="line">	public Price(PriceStrategy priceStrategy)&#123;</span><br><span class="line">		this.priceStrategy = priceStrategy;</span><br><span class="line">	&#125;</span><br><span class="line">	public double getVipPrice(double price)&#123;</span><br><span class="line">		return priceStrategy.priceStrategyInterface(price);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>测试实例<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public class Test &#123;</span><br><span class="line">	public static void main(String[] args)&#123;</span><br><span class="line">		SuperVipStrategy supVipSrategy = new SuperVipStrategy();</span><br><span class="line">		OneVipStrategy onVipStrategy = new OneVipStrategy();</span><br><span class="line">		System.out.print(&quot;超级会员价=&quot;+new  Price(supVipSrategy).getVipPrice(100));</span><br><span class="line">		System.out.print(&quot;一级员价=&quot;+new Price(onVipStrategy).getVipPrice(100));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">-----输出结果---</span><br><span class="line">   超级会员价=80.0一级员价=97.0</span><br></pre></td></tr></table></figure></p>
-<p>实例的uml图<br><img src="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/hexo_strategy/priceStrategy.png" alt="enter image description here"></p>
-<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><h5 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h5><blockquote>
-<p>1、   提供了一种替代继承的方法，而且既保持了继承的优点(代码重用)，还比继承更灵活(算法独立，可以任意扩展)；<br>2、   避免程序中使用多重条件转移语句，使系统更灵活，并易于扩展；<br>3、   遵守大部分GRASP原则和常用设计原则，高内聚、低偶合；<br>4、   易于进行单元测试，各个算法区分开，可以针对每个算法进行单元测试；</p>
-<h5 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h5><p>1、   因为每个具体策略类都会产生一个新类，所以会增加系统需要维护的类的数量；<br>2、   选择何种算法需要客户端来创建对象，增加了耦合，这里可以通过与工厂模式结合解决该问题；<br>3、   程序复杂化。</p>
-</blockquote>
-
-          
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/05/20/设计模式之策略模式/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>

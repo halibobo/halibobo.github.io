@@ -94,7 +94,7 @@
 对android开发有一定了解的同学一定或多或少知道android的触摸事件分发，整个事件的分发消耗流程都可以通过看源码理解，下面通过讲解demo帮助加深事件分发的理解和在实战中的应用。首先直接上demo截">
 <meta property="og:image" content="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/touch_listener/1.gif">
 <meta property="og:image" content="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/touch_listener/border.png">
-<meta property="og:updated_time" content="2016-06-07T01:05:01.863Z">
+<meta property="og:updated_time" content="2016-06-07T04:23:33.289Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="结合支付宝和微信首页巩固android事件分发机制">
 <meta name="twitter:description" content="结合支付宝和微信首页巩固android事件分发机制源码地址 https://github.com/halibobo/TouchListenerConflictandroid的事件分发和处理方式
@@ -350,6 +350,7 @@
 </blockquote>
 <h3 id="难点分析和讲解"><a href="#难点分析和讲解" class="headerlink" title="难点分析和讲解"></a>难点分析和讲解</h3><blockquote>
 <h4 id="一、GridView高度问题"><a href="#一、GridView高度问题" class="headerlink" title="一、GridView高度问题"></a>一、GridView高度问题</h4><h4 id="二、长按GridView某一项可以替换位置，最后一项“更多”不参与滑动与替换位置"><a href="#二、长按GridView某一项可以替换位置，最后一项“更多”不参与滑动与替换位置" class="headerlink" title="二、长按GridView某一项可以替换位置，最后一项“更多”不参与滑动与替换位置"></a>二、长按GridView某一项可以替换位置，最后一项“更多”不参与滑动与替换位置</h4><h4 id="三、GridView长按并滑动某一项时，滑动过程中与ScrollView和ViewPager冲突问题"><a href="#三、GridView长按并滑动某一项时，滑动过程中与ScrollView和ViewPager冲突问题" class="headerlink" title="三、GridView长按并滑动某一项时，滑动过程中与ScrollView和ViewPager冲突问题"></a>三、GridView长按并滑动某一项时，滑动过程中与ScrollView和ViewPager冲突问题</h4><h4 id="四、滑动GridView中某一项时，当滑动到顶部时ScrollView要能向下滚动；手指滑动到底部时要能项上滚动"><a href="#四、滑动GridView中某一项时，当滑动到顶部时ScrollView要能向下滚动；手指滑动到底部时要能项上滚动" class="headerlink" title="四、滑动GridView中某一项时，当滑动到顶部时ScrollView要能向下滚动；手指滑动到底部时要能项上滚动"></a>四、滑动GridView中某一项时，当滑动到顶部时ScrollView要能向下滚动；手指滑动到底部时要能项上滚动</h4></blockquote>
+<a id="more"></a>
 <h3 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h3><h4 id="解决问题一"><a href="#解决问题一" class="headerlink" title="解决问题一"></a>解决问题一</h4><p>为了解决这一系列问题，我需要重写DragGridView继承GridView，第一步需要让DragGridView的每一项item占满整个视图，而gridview默认是限定高度的，解决办法是重写onMeasure，修改测量高度方法，如下</p>
 <pre><code> @Override
 protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -623,13 +624,17 @@ public interface ScrollState {
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/05/26/android声音检测仪---分贝仪/" rel="next" title="android声音检测仪---分贝仪">
-                <i class="fa fa-chevron-left"></i> android声音检测仪---分贝仪
+              <a href="/2016/05/20/设计模式之策略模式/" rel="next" title="设计模式之策略模式">
+                <i class="fa fa-chevron-left"></i> 设计模式之策略模式
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/05/26/android声音检测仪---分贝仪/" rel="prev" title="android声音检测仪---分贝仪">
+                android声音检测仪---分贝仪 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
