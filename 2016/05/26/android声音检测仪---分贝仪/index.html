@@ -84,23 +84,23 @@
 
 
 
-<meta name="description" content="android声音检测仪—分贝仪源码下载地址：https://github.com/halibobo/SoundMeter
+<meta name="description" content="android声音检测仪—分贝仪【申明】未经博主同意，严禁转载源码下载地址：https://github.com/halibobo/SoundMeter
 背景最近小区旁边工地施工，今一大早就被工地传来的guang！guang！…吵醒了。很响很响的那种，你们肯定会问具体有多响？具体要多响？怎么描述呢？顿时就萌生出开发一款记录声音响度的app，忙活了一下午于是就出了这个声音检测仪
-简介android端的声音检测程序，实时获取当前周">
+简介android端">
 <meta property="og:type" content="article">
 <meta property="og:title" content="android声音检测仪---分贝仪">
 <meta property="og:url" content="http://dahei.me/2016/05/26/android声音检测仪---分贝仪/index.html">
 <meta property="og:site_name" content="大黑">
-<meta property="og:description" content="android声音检测仪—分贝仪源码下载地址：https://github.com/halibobo/SoundMeter
+<meta property="og:description" content="android声音检测仪—分贝仪【申明】未经博主同意，严禁转载源码下载地址：https://github.com/halibobo/SoundMeter
 背景最近小区旁边工地施工，今一大早就被工地传来的guang！guang！…吵醒了。很响很响的那种，你们肯定会问具体有多响？具体要多响？怎么描述呢？顿时就萌生出开发一款记录声音响度的app，忙活了一下午于是就出了这个声音检测仪
-简介android端的声音检测程序，实时获取当前周">
+简介android端">
 <meta property="og:image" content="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/sound_meter/sound.gif">
-<meta property="og:updated_time" content="2016-06-07T04:25:10.283Z">
+<meta property="og:updated_time" content="2016-06-08T01:11:09.144Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="android声音检测仪---分贝仪">
-<meta name="twitter:description" content="android声音检测仪—分贝仪源码下载地址：https://github.com/halibobo/SoundMeter
+<meta name="twitter:description" content="android声音检测仪—分贝仪【申明】未经博主同意，严禁转载源码下载地址：https://github.com/halibobo/SoundMeter
 背景最近小区旁边工地施工，今一大早就被工地传来的guang！guang！…吵醒了。很响很响的那种，你们肯定会问具体有多响？具体要多响？怎么描述呢？顿时就萌生出开发一款记录声音响度的app，忙活了一下午于是就出了这个声音检测仪
-简介android端的声音检测程序，实时获取当前周">
+简介android端">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/sound_meter/sound.gif">
 
 
@@ -343,7 +343,7 @@
       
 
       
-        <h1 id="android声音检测仪—分贝仪"><a href="#android声音检测仪—分贝仪" class="headerlink" title="android声音检测仪—分贝仪"></a>android声音检测仪—分贝仪</h1><p>源码下载地址：<a href="https://github.com/halibobo/SoundMeter" target="_blank" rel="external">https://github.com/halibobo/SoundMeter</a></p>
+        <h1 id="android声音检测仪—分贝仪"><a href="#android声音检测仪—分贝仪" class="headerlink" title="android声音检测仪—分贝仪"></a>android声音检测仪—分贝仪</h1><h4 id="【申明】未经博主同意，严禁转载"><a href="#【申明】未经博主同意，严禁转载" class="headerlink" title="【申明】未经博主同意，严禁转载"></a>【申明】<em>未经博主同意，严禁转载</em></h4><p>源码下载地址：<a href="https://github.com/halibobo/SoundMeter" target="_blank" rel="external">https://github.com/halibobo/SoundMeter</a></p>
 <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>最近小区旁边工地施工，今一大早就被工地传来的guang！guang！…吵醒了。很响很响的那种，你们肯定会问具体有多响？具体要多响？怎么描述呢？顿时就萌生出开发一款记录声音响度的app，忙活了一下午于是就出了这个声音检测仪</p>
 <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>android端的声音检测程序，实时获取当前周围环境的声压级，也就是平常所说的分贝值</p>
 <p><img src="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/sound_meter/sound.gif" alt="enter image description here"></p>
@@ -397,29 +397,6 @@ public boolean startRecorder(){
          return 5;
      }
  }
-</code></pre><p>在MainActivity中开启一个线程定时获取声压值并转为分贝</p>
-<pre><code>private void startListenAudio() {
-    thread = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            while (isThreadRun) {
-                try {
-                    if(bListener) {
-                        volume = mRecorder.getMaxAmplitude();  //获取声压值
-                        if(volume &gt; 0 &amp;&amp; volume &lt; 1000000) {
-                            World.setDbCount(20 * (float)(Math.log10(volume)));  //将声压值转为分贝值
-                        }
-                    }
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    bListener = false;
-                }
-            }
-        }
-    });
-    thread.start();
-}
 </code></pre><p>自定义显示分贝值得大圆盘View  取名SoundDiscView</p>
 <pre><code>private float scaleWidth, scaleHeight;
 private int newWidth, newHeight;
@@ -457,16 +434,100 @@ protected void onDraw(Canvas canvas) {
     postInvalidateDelayed(ANIMATION_INTERVAL);
     canvas.drawText((int)World.dbCount+&quot; DB&quot;, newWidth/2,newHeight*36/46, paint); //图片相对位置
 }
-</code></pre><p>运行发现指针滑动的太突兀，做个缓慢过度</p>
+</code></pre><h3 id="启动、暂停与关闭"><a href="#启动、暂停与关闭" class="headerlink" title="启动、暂停与关闭"></a>启动、暂停与关闭</h3><p>控制的所有操作全部在MainActivity里进行的，当启动或者重新进入activity时启动分贝仪，启动代码如下：</p>
+<pre><code> @Override
+protected void onResume() {
+    super.onResume();
+    bListener = true;
+    File file = FileUtil.createFile(&quot;temp.amr&quot;); //创建录音文件
+    if (file != null) {
+        Log.v(&quot;file&quot;, &quot;file =&quot; + file.getAbsolutePath());
+        startRecord(file);
+    } else {
+        Toast.makeText(getApplicationContext(), &quot;创建文件失败&quot;, Toast.LENGTH_LONG).show();
+    }
+}
+
+/**
+ * 开始记录
+ * @param fFile
+ */
+public void startRecord(File fFile){
+    try{
+        mRecorder.setMyRecAudioFile(fFile);
+        if (mRecorder.startRecorder()) {
+            startListenAudio();
+        }else{
+            Toast.makeText(this, &quot;启动录音失败&quot;, Toast.LENGTH_SHORT).show();
+        }
+    }catch(Exception e){
+        Toast.makeText(this, &quot;录音机已被占用&quot;, Toast.LENGTH_SHORT).show();
+        e.printStackTrace();
+    }
+}
+
+
+
+private void startListenAudio() {
+    thread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            while (isThreadRun) {
+                try {
+                    if(bListener) {
+                        volume = mRecorder.getMaxAmplitude();  //获取声压值
+                        if(volume &gt; 0 &amp;&amp; volume &lt; 1000000) {
+                            World.setDbCount(20 * (float)(Math.log10(volume)));  //将声压值转为分贝值
+                            soundDiscView.refresh(); //子线程刷新view，调用了postInvalidate
+                        }
+                    }
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    bListener = false;
+                }
+            }
+        }
+    });
+    thread.start();
+}
+</code></pre><p>startListenAudio的执行过程就是开启一个线程，每隔一段时间获取分贝值然后刷新大圆盘，这里要注意的是在子线程操作刷新view的时候要用postInvalidate，查看postInvalidate的源码发现其原理很简单，它就是v用了一个handler机制，最终刷新肯定是在主线程的。</p>
+<p>当activity被onStop时我们要停止与关闭录音采集，然后删除采集的文件，操作如下：</p>
+<pre><code>/**
+ * 停止记录
+ */
+@Override
+protected void onStop() {
+    super.onStop();
+    bListener = false;
+    mRecorder.delete(); //停止记录并删除录音文件
+}
+
+ public void delete() {
+        stopRecording();
+        if (myRecAudioFile != null) {
+            myRecAudioFile.delete();
+            myRecAudioFile = null;
+        }
+   }
+</code></pre><h3 id="执行"><a href="#执行" class="headerlink" title="执行"></a>执行</h3><p>整个效果还行，但是运行发现指针滑动的太突兀，做个缓慢过度</p>
 <pre><code>public static float dbCount = 40;
 
 private static float lastDbCount = dbCount;
+private static float min = 0.5f;
+private static float value = 0;
 public static void setDbCount(float dbValue) {
-    dbCount = lastDbCount + (dbValue - lastDbCount) * 0.2f; 
+    if (dbValue &gt; lastDbCount) {
+        value = dbValue - lastDbCount &gt; min ? dbValue - lastDbCount : min;
+    }else{
+        value = dbValue - lastDbCount &lt; -min ? dbValue - lastDbCount : -min;
+    }
+    dbCount = lastDbCount + value * 0.2f ;
     lastDbCount = dbCount;
 }
-</code></pre><h3 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h3><p>这里的分贝值是手机系统录音时获取的，手机厂商都对这个值设置了上限而且手机厂商之间都是有差别的，所以获取声音的分贝值会有点偏差。但是最终运行起来的效果还是很满意的。下面附上源码<br><a href="https://github.com/halibobo/SoundMeter" target="_blank" rel="external">源码下载地址</a></p>
-
+</code></pre><p>再次执行，perfect !</p>
+<h3 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h3><p>这里的分贝值是手机系统录音时获取的，手机厂商都对这个值设置了上限而且手机厂商之间都是有差别的，所以获取声音的分贝值会有点偏差。但是最终运行起来的效果还是很满意的。下面附上源码<br><a href="https://github.com/halibobo/SoundMeter" target="_blank" rel="external">源码下载地址</a></p>
+<h4 id="【申明】未经博主同意，严禁转载-1"><a href="#【申明】未经博主同意，严禁转载-1" class="headerlink" title="【申明】未经博主同意，严禁转载"></a>【申明】<em>未经博主同意，严禁转载</em></h4>
       
     </div>
 
@@ -673,7 +734,7 @@ public static void setDbCount(float dbValue) {
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#android声音检测仪—分贝仪"><span class="nav-number">1.</span> <span class="nav-text">android声音检测仪—分贝仪</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#背景"><span class="nav-number">1.0.1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#简介"><span class="nav-number">1.0.2.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#源码"><span class="nav-number">1.0.3.</span> <span class="nav-text">源码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结果"><span class="nav-number">1.0.4.</span> <span class="nav-text">结果</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#android声音检测仪—分贝仪"><span class="nav-number">1.</span> <span class="nav-text">android声音检测仪—分贝仪</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#【申明】未经博主同意，严禁转载"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">【申明】未经博主同意，严禁转载</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#背景"><span class="nav-number">1.0.1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#简介"><span class="nav-number">1.0.2.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#源码"><span class="nav-number">1.0.3.</span> <span class="nav-text">源码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#启动、暂停与关闭"><span class="nav-number">1.0.4.</span> <span class="nav-text">启动、暂停与关闭</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#执行"><span class="nav-number">1.0.5.</span> <span class="nav-text">执行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结果"><span class="nav-number">1.0.6.</span> <span class="nav-text">结果</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#【申明】未经博主同意，严禁转载-1"><span class="nav-number">1.0.6.1.</span> <span class="nav-text">【申明】未经博主同意，严禁转载</span></a></li></ol></li></ol></li></ol></li></ol></div>
             
           </div>
         </section>
