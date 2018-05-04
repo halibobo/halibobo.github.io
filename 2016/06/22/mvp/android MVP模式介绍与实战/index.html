@@ -84,26 +84,22 @@
 
 
 
-<meta name="description" content="android MVP模式介绍与实战描述
-MVP模式是什么？MVP 是从经典的模式MVC演变而来，它们的基本思想有相通的地方：Controller/Presenter负责逻辑的处理，Model提供数据，View负责显示。
-MVC和MVP的区别？">
+<meta name="description" content="android MVP模式介绍与实战描述 MVP模式是什么？MVP 是从经典的模式MVC演变而来，它们的基本思想有相通的地方：Controller/Presenter负责逻辑的处理，Model提供数据，View负责显示。 MVC和MVP的区别？">
+<meta name="keywords" content="我是大黑，专业从事移动端开发--android  ios unity3d  windowsphone  html,设计模式,MVP模式 ">
 <meta property="og:type" content="article">
 <meta property="og:title" content="android MVP模式介绍与实战">
 <meta property="og:url" content="http://dahei.me/2016/06/22/mvp/android MVP模式介绍与实战/index.html">
 <meta property="og:site_name" content="大黑">
-<meta property="og:description" content="android MVP模式介绍与实战描述
-MVP模式是什么？MVP 是从经典的模式MVC演变而来，它们的基本思想有相通的地方：Controller/Presenter负责逻辑的处理，Model提供数据，View负责显示。
-MVC和MVP的区别？">
+<meta property="og:description" content="android MVP模式介绍与实战描述 MVP模式是什么？MVP 是从经典的模式MVC演变而来，它们的基本思想有相通的地方：Controller/Presenter负责逻辑的处理，Model提供数据，View负责显示。 MVC和MVP的区别？">
+<meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/mvp/mvc_mvp.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wiki/googlesamples/android-architecture/images/mvp.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/mvp/ClassDiagram.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/mvp/mvp.gif">
-<meta property="og:updated_time" content="2016-06-22T09:33:33.722Z">
+<meta property="og:updated_time" content="2016-06-22T09:33:34.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="android MVP模式介绍与实战">
-<meta name="twitter:description" content="android MVP模式介绍与实战描述
-MVP模式是什么？MVP 是从经典的模式MVC演变而来，它们的基本思想有相通的地方：Controller/Presenter负责逻辑的处理，Model提供数据，View负责显示。
-MVC和MVP的区别？">
+<meta name="twitter:description" content="android MVP模式介绍与实战描述 MVP模式是什么？MVP 是从经典的模式MVC演变而来，它们的基本思想有相通的地方：Controller/Presenter负责逻辑的处理，Model提供数据，View负责显示。 MVC和MVP的区别？">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/mvp/mvc_mvp.png">
 
 
@@ -355,8 +351,8 @@ MVC和MVP的区别？">
 <li>Presenter： 负责完成View于Model间的逻辑和交互</li>
 </ul>
 <p><strong>小节：MVP模式相当于在MVC模式中又加了一个Presenter用于处理模型和逻辑，将View和Model完全独立开，在android开发中的体现就是activity仅用于显示界面和交互，activity不参与模型结构和逻辑，</strong></p>
-<p>####　实战<br>谷歌官网给了我们一个MVP模式实战的例子，它是一个类似记事本的app，源码地址在：<a href="https://github.com/googlesamples/android-architecture" target="_blank" rel="external">https://github.com/googlesamples/android-architecture</a><br>官方案例的框架图如下：<br><img src="https://raw.githubusercontent.com/wiki/googlesamples/android-architecture/images/mvp.png" alt="enter image description here"></p>
-<p>看完源码后发现其不适合初学者理解，于是我自己写了一个demo方便大家理解。<br>demo源码地址：<a href="https://github.com/halibobo/AndroidMvpExample" target="_blank" rel="external">https://github.com/halibobo/AndroidMvpExample</a><br>源码主要类的结构如下</p>
+<p>####　实战<br>谷歌官网给了我们一个MVP模式实战的例子，它是一个类似记事本的app，源码地址在：<a href="https://github.com/googlesamples/android-architecture" target="_blank" rel="noopener">https://github.com/googlesamples/android-architecture</a><br>官方案例的框架图如下：<br><img src="https://raw.githubusercontent.com/wiki/googlesamples/android-architecture/images/mvp.png" alt="enter image description here"></p>
+<p>看完源码后发现其不适合初学者理解，于是我自己写了一个demo方便大家理解。<br>demo源码地址：<a href="https://github.com/halibobo/AndroidMvpExample" target="_blank" rel="noopener">https://github.com/halibobo/AndroidMvpExample</a><br>源码主要类的结构如下</p>
 <p><img src="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/mvp/ClassDiagram.png" alt="Alt text"></p>
 <p><strong>下面来看源码</strong><br><strong>View层</strong>对应的是MainActivity，它继承了抽离出View所有操作方法的接口OperationView</p>
 <pre><code>/**
@@ -564,7 +560,7 @@ public class PhoneFactory {
 </code></pre><p>运行效果图如下：</p>
 <p><img src="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/mvp/mvp.gif" alt="Alt text"></p>
 <h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p><strong>使用MVP模式会使得代码多出一些接口但是使得代码逻辑更加清晰，尤其是在处理复杂界面和逻辑时，我们可以对同一个activity将每一个业务都抽离成一个Presenter，这样代码既清晰逻辑明确又方便我们扩展。当然如果我们的业务逻辑本身就比较简单的话使用MVP模式就显得，没那么必要。所以我们不需要为了用它而用它，具体的还是要要业务需要</strong></p>
-<h5 id="谢谢大家"><a href="#谢谢大家" class="headerlink" title="谢谢大家"></a>谢谢大家</h5><p>demo地址在：<a href="https://github.com/halibobo/AndroidMvpExample" target="_blank" rel="external">https://github.com/halibobo/AndroidMvpExample</a></p>
+<h5 id="谢谢大家"><a href="#谢谢大家" class="headerlink" title="谢谢大家"></a>谢谢大家</h5><p>demo地址在：<a href="https://github.com/halibobo/AndroidMvpExample" target="_blank" rel="noopener">https://github.com/halibobo/AndroidMvpExample</a></p>
 
       
     </div>
@@ -797,7 +793,7 @@ public class PhoneFactory {
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2016</span>
+  <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

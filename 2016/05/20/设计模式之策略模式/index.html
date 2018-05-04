@@ -84,24 +84,19 @@
 
 
 
-<meta name="description" content="设计模式之策略模式今天介绍下策略模式，直接先上UML图
-策略模式的概念
-The Strategy Pattern defines a family of algorithms,encapsulates each one,and makes them interchangeable. Strategy lets the algorithm vary independently from client">
+<meta name="description" content="设计模式之策略模式今天介绍下策略模式，直接先上UML图 策略模式的概念 The Strategy Pattern defines a family of algorithms,encapsulates each one,and makes them interchangeable. Strategy lets the algorithm vary independently from client">
 <meta property="og:type" content="article">
 <meta property="og:title" content="设计模式之策略模式">
 <meta property="og:url" content="http://dahei.me/2016/05/20/设计模式之策略模式/index.html">
 <meta property="og:site_name" content="大黑">
-<meta property="og:description" content="设计模式之策略模式今天介绍下策略模式，直接先上UML图
-策略模式的概念
-The Strategy Pattern defines a family of algorithms,encapsulates each one,and makes them interchangeable. Strategy lets the algorithm vary independently from client">
+<meta property="og:description" content="设计模式之策略模式今天介绍下策略模式，直接先上UML图 策略模式的概念 The Strategy Pattern defines a family of algorithms,encapsulates each one,and makes them interchangeable. Strategy lets the algorithm vary independently from client">
+<meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/hexo_strategy/strategy.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/hexo_strategy/priceStrategy.png">
-<meta property="og:updated_time" content="2016-06-07T04:27:11.945Z">
+<meta property="og:updated_time" content="2016-06-07T04:27:12.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="设计模式之策略模式">
-<meta name="twitter:description" content="设计模式之策略模式今天介绍下策略模式，直接先上UML图
-策略模式的概念
-The Strategy Pattern defines a family of algorithms,encapsulates each one,and makes them interchangeable. Strategy lets the algorithm vary independently from client">
+<meta name="twitter:description" content="设计模式之策略模式今天介绍下策略模式，直接先上UML图 策略模式的概念 The Strategy Pattern defines a family of algorithms,encapsulates each one,and makes them interchangeable. Strategy lets the algorithm vary independently from client">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/hexo_strategy/strategy.jpg">
 
 
@@ -337,6 +332,8 @@ The Strategy Pattern defines a family of algorithms,encapsulates each one,and ma
         <h2 id="设计模式之策略模式"><a href="#设计模式之策略模式" class="headerlink" title="设计模式之策略模式"></a>设计模式之策略模式</h2><h4 id="今天介绍下策略模式，直接先上UML图"><a href="#今天介绍下策略模式，直接先上UML图" class="headerlink" title="今天介绍下策略模式，直接先上UML图"></a>今天介绍下策略模式，直接先上UML图</h4><p><img src="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/hexo_strategy/strategy.jpg" alt="enter image description here"></p>
 <h4 id="策略模式的概念"><a href="#策略模式的概念" class="headerlink" title="策略模式的概念"></a>策略模式的概念</h4><blockquote>
 <p>The Strategy Pattern defines a family of algorithms,encapsulates each one,and makes them interchangeable. Strategy lets the algorithm vary independently from clients that use it.<br>–（翻译）– 定义一系列的算法,把它们一个个封装起来, 并且使它们可相互替换。策略模式使得算法可独立于使用它的客户而变化。</p>
+</blockquote>
+<blockquote>
 <p>1、需要使用ConcreteStrategy提供的算法。<br>2、 内部维护一个Strategy的实例。<br>3、 负责动态设置运行时Strategy具体的实现算法。<br>4、负责跟Strategy之间的交互和数据传递。</p>
 </blockquote>
 <h4 id="策略模式的组成"><a href="#策略模式的组成" class="headerlink" title="策略模式的组成"></a>策略模式的组成</h4><blockquote>
@@ -361,7 +358,9 @@ The Strategy Pattern defines a family of algorithms,encapsulates each one,and ma
 <p>实例的uml图<br><img src="https://raw.githubusercontent.com/halibobo/BlogImage/master/blog/hexo_strategy/priceStrategy.png" alt="enter image description here"></p>
 <h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><h5 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h5><blockquote>
 <p>1、   提供了一种替代继承的方法，而且既保持了继承的优点(代码重用)，还比继承更灵活(算法独立，可以任意扩展)；<br>2、   避免程序中使用多重条件转移语句，使系统更灵活，并易于扩展；<br>3、   遵守大部分GRASP原则和常用设计原则，高内聚、低偶合；<br>4、   易于进行单元测试，各个算法区分开，可以针对每个算法进行单元测试；</p>
-<h5 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h5><p>1、   因为每个具体策略类都会产生一个新类，所以会增加系统需要维护的类的数量；<br>2、   选择何种算法需要客户端来创建对象，增加了耦合，这里可以通过与工厂模式结合解决该问题；<br>3、   程序复杂化。</p>
+</blockquote>
+<h5 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h5><blockquote>
+<p>1、   因为每个具体策略类都会产生一个新类，所以会增加系统需要维护的类的数量；<br>2、   选择何种算法需要客户端来创建对象，增加了耦合，这里可以通过与工厂模式结合解决该问题；<br>3、   程序复杂化。</p>
 </blockquote>
 
       
@@ -581,7 +580,7 @@ The Strategy Pattern defines a family of algorithms,encapsulates each one,and ma
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2016</span>
+  <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
