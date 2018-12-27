@@ -1,0 +1,2187 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="我是苏玉波，专业从事移动端开发--Android   unity3d  windowsphone  html reactnative weex h5" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="腾讯性能监控框架Matrix源码分析之第一篇概述前几天腾讯将一款Android应用性能监控的框架matrix开源了，源码地址在https://github.com/Tencent/matrix，作者是微信终端团队。matrix到底是什么？据官方说法如下：Matrix 是一款微信研发并日常使用的 APM（Application Performance Manage），当前主要运行在 Android">
+<meta name="keywords" content="我是苏玉波，专业从事移动端开发--Android   unity3d  windowsphone  html reactnative weex h5">
+<meta property="og:type" content="article">
+<meta property="og:title" content="腾讯性能监控框架Matrix源码分析之第一篇">
+<meta property="og:url" content="http://dahei.me/2018/12/27/腾讯性能监控框架Matrix源码分析之第一篇/index.html">
+<meta property="og:site_name" content="苏玉波">
+<meta property="og:description" content="腾讯性能监控框架Matrix源码分析之第一篇概述前几天腾讯将一款Android应用性能监控的框架matrix开源了，源码地址在https://github.com/Tencent/matrix，作者是微信终端团队。matrix到底是什么？据官方说法如下：Matrix 是一款微信研发并日常使用的 APM（Application Performance Manage），当前主要运行在 Android">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-12-27T12:01:21.642Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="腾讯性能监控框架Matrix源码分析之第一篇">
+<meta name="twitter:description" content="腾讯性能监控框架Matrix源码分析之第一篇概述前几天腾讯将一款Android应用性能监控的框架matrix开源了，源码地址在https://github.com/Tencent/matrix，作者是微信终端团队。matrix到底是什么？据官方说法如下：Matrix 是一款微信研发并日常使用的 APM（Application Performance Manage），当前主要运行在 Android">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://dahei.me/2018/12/27/腾讯性能监控框架Matrix源码分析之第一篇/"/>
+
+
+
+
+
+  <title>腾讯性能监控框架Matrix源码分析之第一篇 | 苏玉波</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee54825c8b6ca50edaa53eed126150c0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">苏玉波</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">移动端工程师</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://dahei.me/2018/12/27/腾讯性能监控框架Matrix源码分析之第一篇/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="苏玉波">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="苏玉波">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">腾讯性能监控框架Matrix源码分析之第一篇</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-27T20:02:49+08:00">
+                2018-12-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/12/27/腾讯性能监控框架Matrix源码分析之第一篇/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/12/27/腾讯性能监控框架Matrix源码分析之第一篇/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2018/12/27/腾讯性能监控框架Matrix源码分析之第一篇/" class="leancloud_visitors" data-flag-title="腾讯性能监控框架Matrix源码分析之第一篇">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="腾讯性能监控框架Matrix源码分析之第一篇"><a href="#腾讯性能监控框架Matrix源码分析之第一篇" class="headerlink" title="腾讯性能监控框架Matrix源码分析之第一篇"></a>腾讯性能监控框架Matrix源码分析之第一篇</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>前几天腾讯将一款Android应用性能监控的框架matrix开源了，源码地址在<a href="https://github.com/Tencent/matrix" target="_blank" rel="noopener">https://github.com/Tencent/matrix</a>，作者是微信终端团队。matrix到底是什么？据官方说法如下：<br>Matrix 是一款微信研发并日常使用的 APM（Application Performance Manage），当前主要运行在 Android 平台上。 Matrix 的目标是建立统一的应用性能接入框架，通过各种性能监控方案，对性能监控项的异常数据进行采集和分析，输出相应的问题分析、定位与优化建议，从而帮助开发者开发出更高质量的应用。<br>Matrix 当前监控范围包括：应用安装包大小，帧率变化，启动耗时，卡顿，慢方法，SQLite 操作优化，文件读写，内存泄漏等等（此段截取自matrix的GitHub介绍）<br>下面直接看源码：<br><a id="more"></a><br>代码的入口在application的onCreate()里进行初始化的，</p>
+<pre><code>Matrix.Builder builder = new Matrix.Builder(this);
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">//省略了一部分构造器创建对象的一段代码，这里仅说明是入口</span><br></pre></td></tr></table></figure>
+
+Matrix.init(builder.build());
+</code></pre><p>和leakcanary等库一样在application初始化，Matrix的创建采用了常用的构造器模式，现在进入Matrix内部看看</p>
+<pre><code>private static volatile Matrix sInstance;
+
+private final HashSet&lt;Plugin&gt; plugins;//插件集合
+private final Application     application;
+private final PluginListener  pluginListener; 
+
+private Matrix(Application app, PluginListener listener, HashSet&lt;Plugin&gt; plugins) {
+    this.application = app;
+    this.pluginListener = listener;
+    this.plugins = plugins;
+    for (Plugin plugin : plugins) {
+        plugin.init(application, pluginListener);
+        pluginListener.onInit(plugin);
+    }
+
+}
+
+public static void setLogIml(MatrixLog.MatrixLogImp imp) {
+    MatrixLog.setMatrixLogImp(imp);
+}
+
+public static boolean isInstalled() {
+    return sInstance != null;
+}
+
+public static Matrix init(Matrix matrix) {
+    if (matrix == null) {
+        throw new RuntimeException(&quot;Matrix init, Matrix should not be null.&quot;);
+    }
+    synchronized (Matrix.class) {
+        if (sInstance == null) {
+            sInstance = matrix;
+        } else {
+            MatrixLog.e(TAG, &quot;Matrix instance is already set. this invoking will be ignored&quot;);
+        }
+    }
+    return sInstance;
+}
+</code></pre><p>matrix里持有一个插件的集合plugins，使用的是hashSet来保证不出现重复，还有一个plugin状态的监听pluginListener。Matrix采用了单例模式，volatile sInstance保证线程可见行，初始化的时候采用了双重检查，在构造函数里给变量赋值并遍历plugins集合，并逐个调用插件的初始化方法<code>plugin.init()</code>。<br>那插件plugin是什么呢？下面是plugin的代码：</p>
+<pre><code>public abstract class Plugin implements IPlugin, IssuePublisher.OnIssueDetectListener {
+private static final String TAG = &quot;Matrix.Plugin&quot;;
+
+public static final int PLUGIN_CREATE    = 0x00;
+public static final int PLUGIN_INITED    = 0x01;
+public static final int PLUGIN_STARTED   = 0x02;
+public static final int PLUGIN_STOPPED   = 0x04;
+public static final int PLUGIN_DESTROYED = 0x08;
+private PluginListener pluginListener;
+private Application    application;
+private boolean isSupported = true;
+private int status = PLUGIN_CREATE;
+@Override
+public void init(Application app, PluginListener listener) {
+    if (application != null || pluginListener != null) {
+        throw new RuntimeException(&quot;plugin duplicate init, application or plugin listener is not null&quot;);
+    }
+    status = PLUGIN_INITED;
+    this.application = app;
+    this.pluginListener = listener;
+}
+@Override
+public void onDetectIssue(Issue issue) {
+    pluginListener.onReportIssue(issue);
+}
+public Application getApplication() {
+    return application;
+}
+@Override
+public void start() {
+    //省略部分代码
+    pluginListener.onStart(this);
+}
+@Override
+public void stop() {
+    //省略部分代码
+    pluginListener.onStop(this);
+}
+
+@Override
+public void destroy() {
+    //省略部分代码
+    pluginListener.onDestroy(this);
+}
+  }
+</code></pre><p>plugin它是个抽象类，继承了IPlugin和 IssuePublisher.OnIssueDetectListener，IPlugin包括了五种插件的状态分别是<code>CREATE</code>、<code>INITED</code>、<code>STARTED</code>、<code>STOPPED</code>和<code>DESTROYED</code>，当plugin状态发生变化时将回调交给pluginListener来处理。OnIssueDetectListener接口是IssuePublisher类里的内部接口，IssuePublisher具体做了两件事，记录问题和暴露问题，其暴露问题的方法就是空实现然后暴露接口，交给实现<code>OnIssueDetectListener</code>接口的具体类来处理，Plugin继承了这个<code>OnIssueDetectListener</code>接口，但它也没自己处理，也是同样交留pluginListener来处理。</p>
+<h4 id="第一段小结"><a href="#第一段小结" class="headerlink" title="第一段小结"></a>第一段小结</h4><ol>
+<li>Matrix是个单例，它维护着插件的集合plugins和插件不同状态及报错的处理接口</li>
+<li>pluginListener，这个pluginListener是plugins集合共有的，</li>
+<li>matrix初始化的时候会逐个调用plugin 的init方法。</li>
+<li>插件Plugin是个抽象类，具体的插件需要实现的，matrix框架里自带的插件有<code>TracePlugin</code>、<code>IOCanaryPlugin</code>、<code>SQLiteLintPlugin</code>、<code>ResourcePlugin</code>。<br>下面会一一查看它们的作用和具体实现</li>
+</ol>
+<h4 id="TracePlugin"><a href="#TracePlugin" class="headerlink" title="TracePlugin"></a>TracePlugin</h4><p>首先来看TracePlugin，它继承自plugin，里面包括四个维度<code>FrameTracer</code>、<code>FPSTracer</code>、 <code>EvilMethodTracer</code>、<code>StartUpTracer</code>来分析app的，初始化的方法如下：</p>
+<pre><code> @Override
+public void init(Application app, PluginListener listener) {
+    super.init(app, listener);
+    MatrixLog.i(TAG, &quot;trace plugin init, trace config: %s&quot;, mTraceConfig.toString());
+    //低版本不支持
+    if (Build.VERSION.SDK_INT &lt; Build.VERSION_CODES.JELLY_BEAN) {
+        MatrixLog.e(TAG, &quot;[FrameBeat] API is low Build.VERSION_CODES.JELLY_BEAN(16), TracePlugin is not supported&quot;);
+        unSupportPlugin();
+        return;
+    }
+    ApplicationLifeObserver.init(app);
+    mFrameTracer = new FrameTracer(this);
+    //开关，可以选择不开
+    if (mTraceConfig.isMethodTraceEnable()) {
+        mStartUpTracer = new StartUpTracer(this, mTraceConfig);
+    }
+    if (mTraceConfig.isFPSEnable()) {
+        mFPSTracer = new FPSTracer(this, mTraceConfig);
+    }
+    if (mTraceConfig.isMethodTraceEnable()) {
+        mEvilMethodTracer = new EvilMethodTracer(this, mTraceConfig);
+    }
+}
+</code></pre><p>  ApplicationLifeObserver.init(app)是利用了application的ActivityLifecycleCallbacks可以对每个activity的生命周期进行监控做了个观察者模式，另外加了判断分析当前app是在前台还是后台，具体实现方式是记录onActivityResumed和onActivityPaused的生命周期，由于新起的activity的onResume会在底层activity的onPause之后，如果onActivityPaused之后600ms没有执行到onActivityResumed则认为当前处于后台。仔细想想这么做会有误伤，如果有个activity启动特别慢，此时超过600ms则判定已经处于后台了，不过这个影响比较小，因为activity启动之后到resume时就又恢复成正常的前台，即使误判也不影响检测，具体实现可以看源码。</p>
+<p>在TracePlugin初始化的时候，分别新建了mStartUpTracer、mFPSTracer、mFrameTracer和mEvilMethodTracer，其中的参数mTraceConfig是个简单的配置类，只是记录了开关就不在这展开了。查看matrix的demo开始检测的入口是tracePlugin.start()里，代码如下：</p>
+<pre><code>@Override
+public void start() {
+    super.start();
+    if (!isSupported()) {
+        return;
+    }
+    new Handler(Looper.getMainLooper()).post(new Runnable() {
+        @Override
+        public void run() {
+            //保证在主线程调用
+            FrameBeat.getInstance().onCreate();
+        }
+    });
+    if (null != mFPSTracer) {
+        mFPSTracer.onCreate();
+    }
+    if (null != mEvilMethodTracer) {
+        mEvilMethodTracer.onCreate();
+    }
+    if (null != mFrameTracer) {
+        mFrameTracer.onCreate();
+    }
+    if (null != mStartUpTracer) {
+        mStartUpTracer.onCreate();
+    }
+}
+</code></pre><p>在onstart时在主线程中调用了FrameBeat.getInstance().onCreate()，这里是做UI分析用的。<br>  目前做UI性能卡顿分析一般有两种方式：</p>
+<p>  一是利用主线程looper的loop方法在寻找msg.target.dispatchMessage(msg)时的前后会分别打印一段log，可以利用log的内容不同或者log的前后次数记录两次log的时间差，这样就可以大致认为是主线程处理msg的时间，如果时间过长则认为卡顿；</p>
+<p>  二是利用Choreographer，Choreographer就是一个消息处理器，根据vsync 信号 来计算frame，在doFrame方法里可以收到回调的当前时间，正常绘制两次doFrame的时间差应该是1000/60=16.6666毫秒（每秒60帧），但是遇到卡顿或过度重绘等会导致时间拉长。</p>
+<p>  这里采用的是第二种方式，其doFrame的实现如下：</p>
+<pre><code> @Override
+public void doFrame(long frameTimeNanos) {
+    if (isPause) {
+        return;
+    }
+    if (frameTimeNanos &lt; mLastFrameNanos || mLastFrameNanos &lt;= 0) {
+        mLastFrameNanos = frameTimeNanos;
+        if (null != mChoreographer) {
+            mChoreographer.postFrameCallback(this);
+        }
+        return;
+    }
+    if (null != mFrameListeners) {
+        for (IFrameBeatListener listener : mFrameListeners) {
+            listener.doFrame(mLastFrameNanos, frameTimeNanos);
+        }
+        if (null != mChoreographer) {
+            mChoreographer.postFrameCallback(this);
+        }
+        mLastFrameNanos = frameTimeNanos;
+    }
+}
+</code></pre><p>记录两次doFrame的时间，交给mFrameListeners执行回调。<br> 下面会分析mFPSTracer 、mFrameTracer、mFrameTracer和mStartUpTracer 的onCreate方法的具体实现，这四个类都继承了BaseTracer类，因此在分析得前先看下BaseTracer，</p>
+<pre><code>public abstract class BaseTracer extends IssuePublisher implements ApplicationLifeObserver.IObserver, IFrameBeatListener, IMethodBeatListener {
+
+private final TracePlugin mPlugin;
+private static final MethodBeat sMethodBeat = new MethodBeat();
+private static final HashMap&lt;Class&lt;BaseTracer&gt;, BaseTracer&gt; sTracerMap = new HashMap&lt;&gt;();
+BaseTracer(TracePlugin plugin) {
+    super(plugin);
+    this.mPlugin = plugin;
+    sTracerMap.put((Class&lt;BaseTracer&gt;) this.getClass(), this);
+}
+@Override
+public void doFrame(long lastFrameNanos, long frameNanos) {
+}
+
+public void onCreate() {
+    MatrixLog.i(TAG, &quot;[onCreate] name:%s process:%s&quot;, this.getClass().getCanonicalName(), Process.myPid());
+    if (isEnableMethodBeat()) {
+        if (!getMethodBeat().isHasListeners()) {
+            getMethodBeat().onCreate();
+        }
+        getMethodBeat().registerListener(this);
+    }
+    ApplicationLifeObserver.getInstance().register(this);
+    FrameBeat.getInstance().addListener(this);
+    isCreated = true;
+}
+
+public void onDestroy() {
+    MatrixLog.i(TAG, &quot;[onDestroy] name:%s  process:%s&quot;, this.getClass().getCanonicalName(), Process.myPid());
+    if (isEnableMethodBeat()) {
+        getMethodBeat().unregisterListener(this);
+        if (!getMethodBeat().isHasListeners()) {
+            getMethodBeat().onDestroy();
+        }
+    }
+    ApplicationLifeObserver.getInstance().unregister(this);
+    FrameBeat.getInstance().removeListener(this);
+    isCreated = false;
+}
+protected void sendReport(JSONObject jsonObject, String tag) {
+    Issue issue = new Issue();
+    issue.setTag(tag);
+    issue.setContent(jsonObject);
+    mPlugin.onDetectIssue(issue);
+}
+}
+</code></pre><p> 这里截取了一部分核心的代码，BaseTracer里有个静态的hashMap，类名作为key，value是具体的BaseTracer对象，它是静态的所以只会有一份，在onCreate里注册了前面说到的ApplicationLifeObserver和FrameBeat的监听，监听activity的生命周期的回调和Choreographer两次绘制的时间的接口回调，回调是交给自己来处理的。另外暴露了sendReport方法，方法里调用的是本地持有的TracePlugin对象的onDetectIssue来处理，这里和前文Matrix里plugins与pluginListener相对应上了，plugins里的onDetectIssue最终都是由pluginListener来处理的。</p>
+<h4 id="TracePlugin初步小结"><a href="#TracePlugin初步小结" class="headerlink" title="TracePlugin初步小结"></a>TracePlugin初步小结</h4><p>TracePlugin分成四个部分mStartUpTracer、mFPSTracer、mFrameTracer和mEvilMethodTracer，它们都继承了BaseTracer；<br>BaseTracer里监听了ApplicationLifeObserver，即每个activity的生命周期和前后台状态的监听；<br>BaseTracer监听着FrameBeat的每一帧刷新前后的时间即doFrame(long lastFrameNanos, long frameNanos);</p>
+<h5 id="第一个纬度：mFrameTracer"><a href="#第一个纬度：mFrameTracer" class="headerlink" title="第一个纬度：mFrameTracer"></a>第一个纬度：mFrameTracer</h5><p>下面我们来看看mFrameTracer<br>mFrameTracer的具体实现的关键方法doFrame</p>
+<pre><code>@Override
+public void doFrame(final long lastFrameNanos, final long frameNanos) {
+    if (!isDrawing) {
+        return;
+    }
+    isDrawing = false;
+    final int droppedCount = (int) ((frameNanos - lastFrameNanos) / REFRESH_RATE_MS);
+    if (droppedCount &gt; 1) {
+        for (final IDoFrameListener listener : mDoFrameListenerList) {
+            listener.doFrameSync(lastFrameNanos, frameNanos, getScene(), droppedCount);
+            if (null != listener.getHandler()) {
+                listener.getHandler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.getHandler().post(new AsyncDoFrameTask(listener,
+                                lastFrameNanos, frameNanos, getScene(), droppedCount));
+                    }
+                });
+            }
+        }
+    }
+}
+</code></pre><p>在doFrame里根据界面绘制的时间差计算，如果超过了正常绘制16.67秒就会在监听里把数据回调出去，这个有两个回调方法doFrameSync和doFrameAsync，对应的是同步调用和异步调用，异步的实现方式利用handler机制，其中getScene是当前的activity或fragment的类名。</p>
+<h5 id="第二个纬度：EvilMethodTracer"><a href="#第二个纬度：EvilMethodTracer" class="headerlink" title="第二个纬度：EvilMethodTracer"></a>第二个纬度：EvilMethodTracer</h5><p>EvilMethodTracer顾名思义就是找到那些邪恶的方法，也就是耗时多的方法，具体实现来看代码，<br>首先EvilMethodTracer继承了LazyScheduler接口，LazyScheduler接口是个利用handler实现的定时器，代码如下：</p>
+<pre><code>public class LazyScheduler {
+//延迟即间隔时间
+private final long delay;
+private final Handler mHandler;
+private volatile boolean isSetUp = false;
+public LazyScheduler(HandlerThread handlerThread, long delay) {
+    this.delay = delay;
+    mHandler = new Handler(handlerThread.getLooper());
+}
+public boolean isSetUp() {
+    return isSetUp;
+}
+//开始
+public void setUp(final ILazyTask task, boolean cycle) {
+    if (null != mHandler) {
+        this.isSetUp = true;
+        mHandler.removeCallbacksAndMessages(null);
+        RetryRunnable retryRunnable = new RetryRunnable(mHandler, delay, task, cycle);
+        mHandler.postDelayed(retryRunnable, delay);
+    }
+}
+public void cancel() {
+    if (null != mHandler) {
+        this.isSetUp = false;
+        mHandler.removeCallbacksAndMessages(null);
+    }
+}
+public void setOff() {
+    cancel();
+}
+public interface ILazyTask {
+    void onTimeExpire();
+}
+
+static class RetryRunnable implements Runnable {
+    private final Handler handler;
+    private final long delay;
+    private final ILazyTask lazyTask;
+    private final boolean cycle;
+    RetryRunnable(Handler handler, long delay, ILazyTask lazyTask, boolean cycle) {
+        this.handler = handler;
+        this.delay = delay;
+        this.lazyTask = lazyTask;
+        this.cycle = cycle;
+    }
+    @Override
+    public void run() {
+        lazyTask.onTimeExpire();
+        if (cycle) {
+            handler.postDelayed(this, delay);
+        }
+    }
+}
+</code></pre><p>这个定时器的实现利用了handler机制，handler的looper直接从参数handlerThread的线程里获得，这里的代码并不复杂，只要记住一条就可以，一是定时器支持是否循环，执行是会调用ILazyTask的onTimeExpire方法。<br>EvilMethodTracer也是重写了定时器的onTimeExpire方法，下面来看EvilMethodTracer的具体代码。</p>
+<pre><code>public EvilMethodTracer(TracePlugin plugin, TraceConfig config) {
+    super(plugin);
+    this.mTraceConfig = config;
+    mLazyScheduler = new LazyScheduler(MatrixHandlerThread.getDefaultHandlerThread(), Constants.DEFAULT_ANR);
+    mActivityCreatedInfoMap = new HashMap&lt;&gt;();
+}
+</code></pre><p>  创建时初始化了mLazyScheduler和mActivityCreatedInfoMap，mLazyScheduler，这里的mLazyScheduler是个定时器Constants.DEFAULT_ANR默认值5秒，用于记录界面5秒没响应及ANR，中间有句MatrixHandlerThread.getDefaultHandlerThread()，MatrixHandlerThread是个hadlerThread线程管理类，它里面包含了Matrix默认工作线程、主线程和一个动态创建新线程的容器，getDefaultHandlerThread()方法获取的是默认工作线程的handlerThread。mActivityCreatedInfoMap是用于记录activity的启动耗时信息。具体是怎么做到的呢？让我们一步步来看，首先启动EvilMethodTracer的代码如下：</p>
+<pre><code>@Override
+public void onCreate() {
+    super.onCreate();
+    if (!getMethodBeat().isRealTrace()) {
+        MatrixLog.e(TAG, &quot;MethodBeat don&apos;t work, maybe it&apos;s wrong in trace Build!&quot;);
+        onDestroy();
+        return;
+    }
+    if (this.mAnalyseThread == null) {
+        this.mAnalyseThread = MatrixHandlerThread.getNewHandlerThread(&quot;matrix_trace_analyse_thread&quot;);
+        mHandler = new Handler(mAnalyseThread.getLooper());
+    }
+    // set up when onCreate
+    mLazyScheduler.cancel();
+    if (ApplicationLifeObserver.getInstance().isForeground()) {
+        onFront(null);
+    }
+}
+</code></pre><p>这里先判断了getMethodBeat().isRealTrace()，MethodBeat是统计ANR和超时Method的重要类，可以说是核心类，一会在展开。<br>mAnalyseThread是利用MatrixHandlerThread新起了一个线程，将并它的looer交给mHandler。EvilMethodTracer重新了doFrame方法：</p>
+<pre><code>@Override
+public void doFrame(long lastFrameNanos, long frameNanos) {
+    //isIgnoreFrame为true的时候，一是出现了ANR，二是正在记录方法的缓存满了
+    if (isIgnoreFrame) {
+        //清理缓存
+        mActivityCreatedInfoMap.clear();
+        //改变标识
+        setIgnoreFrame(false);
+        //重置编号
+        getMethodBeat().resetIndex();
+        return;
+    }
+    //index指的是当前执行的方法对应缓存里的编号
+    int index = getMethodBeat().getCurIndex();
+    //hasEntered说明activity已经存在；
+    if (hasEntered &amp;&amp; frameNanos - lastFrameNanos &gt; mTraceConfig.getEvilThresholdNano()) {
+        MatrixLog.e(TAG, &quot;[doFrame] dropped frame too much! lastIndex:%s index:%s&quot;, 0, index);
+        //两帧之间相差超过一秒，将缓存里的数据进行分析
+        handleBuffer(Type.NORMAL, 0, index - 1, getMethodBeat().getBuffer(), (frameNanos - lastFrameNanos) / Constants.TIME_MILLIS_TO_NANO);
+    }
+    //重置编号
+    getMethodBeat().resetIndex();
+    //取消mLazyScheduler，即清空对应的messageQueue
+    mLazyScheduler.cancel();
+    //发送延迟消息，默认5秒，意味着五秒中之内没有回到doframe会执行mLazyScheduler里的runnable
+    mLazyScheduler.setUp(this, false);
+
+}
+</code></pre><p> doFrame时间差超过1秒会执行handleBuffer，时间差超过5秒会执行mLazyScheduler里的onTimeExpire。先来看onTimeExpire方法：</p>
+<pre><code>public void onTimeExpire() {
+    // 进到这里说明doframe延迟了5秒，视为界面的ANR
+    //在后台就忽略
+    if (isBackground()) {
+        MatrixLog.w(TAG, &quot;[onTimeExpire] pass this time, on Background!&quot;);
+        return;
+    }
+    //起始时间
+    long happenedAnrTime = getMethodBeat().getCurrentDiffTime();
+    MatrixLog.w(TAG, &quot;[onTimeExpire] maybe ANR!&quot;);
+    //暂停一次Frame捕捉
+    setIgnoreFrame(true);
+    //缓存里的数据可以清空
+    getMethodBeat().lockBuffer(false);
+    //分析缓存，Type为ANR
+    handleBuffer(Type.ANR, 0, getMethodBeat().getCurIndex() - 1, getMethodBeat().getBuffer(), null, Constants.DEFAULT_ANR, happenedAnrTime, -1);
+}
+</code></pre><p>  当执行到onTimeExpire这里如果是前台就视为ANR，到目前ANR的捕捉大致知道了，分析数据和doframe一样也是执行handleBuffer，这里也再次提到了getMethodBeat()，getMethodBeat返回的是本地持有的对象sMethodBeat，分析数据的方法handleBuffer也会用到sMethodBeat里的东西，所以分析之前我们先查看下MethodBeat这个类究竟是做什么的，分析MethodBeat之后再来看看handleBuffer。</p>
+<h5 id="插曲—MethodBeat"><a href="#插曲—MethodBeat" class="headerlink" title="插曲—MethodBeat"></a>插曲—MethodBeat</h5><p>MethodBeat类主要做的事是用一个数组记录应用执行的每个方法和方法耗时，用的是long[]，使用方法id和耗时进行按位换算得要一个long值作为元素，缓存默认长度是一百万。在MethodBeat开始有这段代码：</p>
+<pre><code>static {
+    Hacker.hackSysHandlerCallback();
+    sCurrentDiffTime = sLastDiffTime = System.nanoTime() / Constants.TIME_MILLIS_TO_NANO;
+    sReleaseBufferHandler.sendEmptyMessageDelayed(RELEASE_BUFFER_MSG_ID, Constants.DEFAULT_RELEASE_BUFFER_DELAY);
+}
+</code></pre><p>进入Hacker.hackSysHandlerCallback</p>
+<pre><code>public class Hacker {
+private static final String TAG = &quot;Matrix.Hacker&quot;;
+public static boolean isEnterAnimationComplete = false;
+public static long sApplicationCreateBeginTime = 0L;
+public static int sApplicationCreateBeginMethodIndex = 0;
+public static long sApplicationCreateEndTime = 0L;
+public static int sApplicationCreateEndMethodIndex = 0;
+public static int sApplicationCreateScene = -100;
+
+public static void hackSysHandlerCallback() {
+    try {
+        sApplicationCreateBeginTime = System.currentTimeMillis();
+        sApplicationCreateBeginMethodIndex = MethodBeat.getCurIndex();
+        Class&lt;?&gt; forName = Class.forName(&quot;android.app.ActivityThread&quot;);
+        Field field = forName.getDeclaredField(&quot;sCurrentActivityThread&quot;);
+        field.setAccessible(true);
+        Object activityThreadValue = field.get(forName);
+        Field mH = forName.getDeclaredField(&quot;mH&quot;);
+        mH.setAccessible(true);
+        Object handler = mH.get(activityThreadValue);
+        Class&lt;?&gt; handlerClass = handler.getClass().getSuperclass();
+        Field callbackField = handlerClass.getDeclaredField(&quot;mCallback&quot;);
+        callbackField.setAccessible(true);
+        Handler.Callback originalCallback = (Handler.Callback) callbackField.get(handler);
+        HackCallback callback = new HackCallback(originalCallback);
+        callbackField.set(handler, callback);
+        MatrixLog.i(TAG, &quot;hook system handler completed. start:%s&quot;, sApplicationCreateBeginTime);
+    } catch (Exception e) {
+        MatrixLog.e(TAG, &quot;hook system handler err! %s&quot;, e.getCause().toString());
+    }
+}
+</code></pre><p>}<br>这里利用了反射机制进行了hook，代码比较清晰，目的很明确就是利用自己写的HackCallback来替换ActivityThread类里的mCallback，达到偷梁换柱的效果，这样做的意义就是可以拦截mCallback的原有的消息，然后选择自己要处理的消息，HackCallback里的handleMessage实现如下：</p>
+<pre><code>public boolean handleMessage(Message msg) {
+    if (msg.what == LAUNCH_ACTIVITY) {
+        Hacker.isEnterAnimationComplete = false;
+    } else if (msg.what == ENTER_ANIMATION_COMPLETE) {
+        Hacker.isEnterAnimationComplete = true;
+    }
+    if (!isCreated) {
+        if (msg.what == LAUNCH_ACTIVITY || msg.what == CREATE_SERVICE || msg.what == RECEIVER) {
+            Hacker.sApplicationCreateEndTime = System.currentTimeMillis();
+            Hacker.sApplicationCreateEndMethodIndex = MethodBeat.getCurIndex();
+            Hacker.sApplicationCreateScene = msg.what;
+            isCreated = true;
+        }
+    }
+    if (null == mOriginalCallback) {
+        return false;
+    }
+    return mOriginalCallback.handleMessage(msg);
+}
+</code></pre><p>   拦截到了LAUNCH_ACTIVITY和ENTER_ANIMATION_COMPLETE消息，这样就知道当前的activity创建到完成的时机。</p>
+<p>现在再回到MethodBeat，它继承了IMethodBeat和ApplicationLifeObserver.IObserver接口，IObserver就是之前用于activity生命周期的监听，IMethodBeat是用于方法缓存数据相关的。在看到这里源码时，我就有个疑惑，相信大多数人和我一样会有这样的疑惑：它是如何记录每个方法的，这些方法的执行时间是怎么样计算的？粗略看了一下MethodBeat并没有找到数据的来源，但是我找到了下面这两个个方法：</p>
+<pre><code> //hook method when it&apos;s called in
+public static void i(int methodId) {
+    if (isBackground) {
+        return;
+    }
+
+    if (!isRealTrace) {
+        updateDiffTime();
+        sTimeUpdateHandler.sendEmptyMessage(UPDATE_TIME_MSG_ID);
+        sBuffer = new long[Constants.BUFFER_TMP_SIZE];
+    }
+    isRealTrace = true;
+    if (isCreated &amp;&amp; Thread.currentThread() == sMainThread) {
+        if (sIsIn) {
+            android.util.Log.e(TAG, &quot;ERROR!!! MethodBeat.i Recursive calls!!!&quot;);
+            return;
+        }
+
+        sIsIn = true;
+
+        if (sIndex &gt;= Constants.BUFFER_SIZE) {
+            for (IMethodBeatListener listener : sListeners) {
+                listener.pushFullBuffer(0, Constants.BUFFER_SIZE - 1, sBuffer);
+            }
+            sIndex = 0;
+        } else {
+            mergeData(methodId, sIndex, true);
+        }
+        ++sIndex;
+        sIsIn = false;
+    } else if (!isCreated &amp;&amp; Thread.currentThread() == sMainThread &amp;&amp; sBuffer != null) {
+        if (sIsIn) {
+            android.util.Log.e(TAG, &quot;ERROR!!! MethodBeat.i Recursive calls!!!&quot;);
+            return;
+        }
+
+        sIsIn = true;
+
+        if (sIndex &lt; Constants.BUFFER_TMP_SIZE) {
+            mergeData(methodId, sIndex, true);
+            ++sIndex;
+        }
+
+        sIsIn = false;
+    }
+
+
+}
+
+//hook method when it&apos;s called out.
+public static void o(int methodId) {
+    if (isBackground || null == sBuffer) {
+        return;
+    }
+    if (isCreated &amp;&amp; Thread.currentThread() == sMainThread) {
+        if (sIndex &lt; Constants.BUFFER_SIZE) {
+            mergeData(methodId, sIndex, false);
+        } else {
+            for (IMethodBeatListener listener : sListeners) {
+                listener.pushFullBuffer(0, Constants.BUFFER_SIZE - 1, sBuffer);
+            }
+            sIndex = 0;
+        }
+        ++sIndex;
+    } else if (!isCreated &amp;&amp; Thread.currentThread() == sMainThread) {
+        if (sIndex &lt; Constants.BUFFER_TMP_SIZE) {
+            mergeData(methodId, sIndex, false);
+            ++sIndex;
+        }
+    }
+}
+</code></pre><p>这两个方法的注释很值得注意：hook method when it’s called in 和hook method when it’s called out，意思是通过hook来执行的，于是大致猜想它实现记录方法的思路就是在应用运行的每个方法之前调用<code>i()</code>，在每个方法结尾调用方法<code>o()</code>，记录方法名称和o-i的时间差。这两个方法的最后会执行mergeData方法：</p>
+<pre><code> private static void mergeData(int methodId, int index, boolean isIn) {
+    long trueId = 0L;
+    if (isIn) {
+        trueId |= 1L &lt;&lt; 63;
+    }
+    trueId |= (long) methodId &lt;&lt; 43;
+    trueId |= sCurrentDiffTime &amp; 0x7FFFFFFFFFFL;
+    sBuffer[index] = trueId;
+}
+</code></pre><p>   这里的sCurrentDiffTime就是o()、i()两个方法直接的时间差，和methodId一起保存在long里。<br>   思路有了，它的实现方式呢？既然是用的hook，于是全局搜索了这个class的名称，在matrix-gradle-plugin库里找到了MethodTracer这个类，这个类里找到了如下这段代码：</p>
+<pre><code>protected TraceMethodAdapter(int api, MethodVisitor mv, int access, String name, String desc, String className,
+                                 boolean hasWindowFocusMethod, boolean isMethodBeatClass) {
+        super(api, mv, access, name, desc);
+        TraceMethod traceMethod = TraceMethod.create(0, access, className, name, desc);
+        this.methodName = traceMethod.getMethodName();
+        this.isMethodBeatClass = isMethodBeatClass;
+        this.hasWindowFocusMethod = hasWindowFocusMethod;
+        this.className = className;
+        this.name = name;
+    }
+
+    @Override
+    protected void onMethodEnter() {
+        TraceMethod traceMethod = mCollectedMethodMap.get(methodName);
+        if (traceMethod != null) {
+            traceMethodCount.incrementAndGet();
+            mv.visitLdcInsn(traceMethod.id);
+            mv.visitMethodInsn(INVOKESTATIC, TraceBuildConstants.MATRIX_TRACE_CLASS, &quot;i&quot;, &quot;(I)V&quot;, false);
+        }
+    }
+
+    @Override
+    protected void onMethodExit(int opcode) {
+        TraceMethod traceMethod = mCollectedMethodMap.get(methodName);
+        if (traceMethod != null) {
+            if (hasWindowFocusMethod &amp;&amp; mTraceConfig.isActivityOrSubClass(className, mCollectedClassExtendMap)
+                    &amp;&amp; mCollectedMethodMap.containsKey(traceMethod.getMethodName())) {
+                TraceMethod windowFocusChangeMethod = TraceMethod.create(-1, Opcodes.ACC_PUBLIC, className,
+                        TraceBuildConstants.MATRIX_TRACE_ON_WINDOW_FOCUS_METHOD, TraceBuildConstants.MATRIX_TRACE_ON_WINDOW_FOCUS_METHOD_ARGS);
+                if (windowFocusChangeMethod.equals(traceMethod)) {
+                    traceWindowFocusChangeMethod(mv);
+                }
+            }
+
+            traceMethodCount.incrementAndGet();
+            mv.visitLdcInsn(traceMethod.id);
+            mv.visitMethodInsn(INVOKESTATIC, TraceBuildConstants.MATRIX_TRACE_CLASS, &quot;o&quot;, &quot;(I)V&quot;, false);
+        }
+    }
+}
+
+private void traceApplicationContext(MethodVisitor mv, TraceMethod traceMethod) {
+    mv.visitVarInsn(Opcodes.ALOAD, 0);
+    mv.visitLdcInsn(traceMethod.methodName);
+    mv.visitLdcInsn(traceMethod.desc);
+    mv.visitMethodInsn(Opcodes.INVOKESTATIC, TraceBuildConstants.MATRIX_TRACE_CLASS, &quot;trace&quot;, &quot;(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)V&quot;, false);
+}
+
+private void traceWindowFocusChangeMethod(MethodVisitor mv) {
+    mv.visitVarInsn(Opcodes.ALOAD, 0);
+    mv.visitVarInsn(Opcodes.ILOAD, 1);
+    mv.visitMethodInsn(Opcodes.INVOKESTATIC, TraceBuildConstants.MATRIX_TRACE_CLASS, &quot;at&quot;, &quot;(Landroid/app/Activity;Z)V&quot;, false);
+</code></pre><p> }</p>
+<p>   这段代码是在内部类TraceMethodAdapter里的，这个内部类又继承了AdviceAdapter，AdviceAdapter的实现来自引用的org.wo2.asm下的库，从网上搜了一下，asm是个java字节码操纵框架，它可以直接以二进制形式动态地生成 stub 类或其他代理类，或者在装载时动态地修改类。ASM 提供类似于 BCEL 和 SERP 之类的工具包的功能，但是被设计得更小巧、更快速，这使它适用于实时代码插装。对于matrix来说，意思就是可以利用asm这个框架进行方法的装载，在方法前执行“com/tencent/matrix/trace/core/MethodBeat”这个class里的<code>i()</code>方法，在每个方法最后执行<code>o()</code>方法。顿时觉得涨姿势了，欲知详情可以自己这块的源码。</p>
+<h4 id="回到EvilMethodTracer"><a href="#回到EvilMethodTracer" class="headerlink" title="回到EvilMethodTracer"></a>回到EvilMethodTracer</h4><p>methodBeat里的方法缓存的来源终于有了，现在回到EvilMethodTracer的handleBuffer分析来，先看方法源码：</p>
+<pre><code>private void handleBuffer(Type type, int start, int end, long[] buffer, ViewUtil.ViewInfo viewInfo, long cost, long happenTime, int subType) {
+    if (null == buffer) {
+        MatrixLog.e(TAG, &quot;null == buffer&quot;);
+        return;
+    }
+    if (cost &lt; 0 || cost &gt;= Constants.MAX_EVIL_METHOD_COST) {
+        MatrixLog.e(TAG, &quot;[analyse] trace cost invalid:%d&quot;, cost);
+        return;
+    }
+    start = Math.max(0, start);
+    end = Math.min(buffer.length - 1, end);
+    if (start &lt;= end) {
+        long[] tmp = new long[end - start + 1];
+        System.arraycopy(buffer, start, tmp, 0, end - start + 1);
+
+        if (null != mHandler) {
+            AnalyseExtraInfo info = new AnalyseExtraInfo(type, viewInfo, cost, happenTime);
+            info.setSubType(subType);
+            mHandler.post(new AnalyseTask(tmp, info));
+        }
+    }
+}
+</code></pre><p>这段代码比较简单，意思就是截图有效的那段数据交给mHandler所在的线程来执行，有效的数据即tmp，真正执行的是AnalyseTask的<code>run</code>方法。AnalyseTask的分析方法比较长，大致的思路就是，根据存储里的数据即每个方法id和执行时间，找到时间异常的方法，将异常的方法信息和一些基本信息保存在一个JSONObject里，然后调用plugin的<code>sendReport</code>方法，这里直接截取分析后发布的方法：</p>
+<pre><code>try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject = DeviceUtil.getDeviceInfo(jsonObject, getPlugin().getApplication());
+
+            jsonObject.put(SharePluginInfo.ISSUE_STACK_TYPE, analyseExtraInfo.type.name());
+            jsonObject.put(SharePluginInfo.ISSUE_SUB_TYPE, analyseExtraInfo.subType);
+            jsonObject.put(SharePluginInfo.ISSUE_COST, analyseExtraInfo.cost);
+
+            if (analyseExtraInfo.type == Type.ENTER) {
+                JSONObject viewInfoJson = new JSONObject();
+                ViewUtil.ViewInfo viewInfo = analyseExtraInfo.viewInfo;
+                viewInfoJson.put(SharePluginInfo.ISSUE_VIEW_DEEP, null == viewInfo ? 0 : viewInfo.mViewDeep);
+                viewInfoJson.put(SharePluginInfo.ISSUE_VIEW_COUNT, null == viewInfo ? 0 : viewInfo.mViewCount);
+                viewInfoJson.put(SharePluginInfo.ISSUE_VIEW_ACTIVITY, null == viewInfo ? 0 : viewInfo.mActivityName);
+                jsonObject.put(SharePluginInfo.ISSUE_VIEW_INFO, viewInfoJson);
+            }
+            jsonObject.put(SharePluginInfo.ISSUE_STACK, reportBuilder.toString());
+            jsonObject.put(SharePluginInfo.ISSUE_STACK_KEY, key);
+            sendReport(jsonObject);
+
+        } catch (JSONException e) {
+            MatrixLog.e(TAG, &quot;[JSONException for stack %s, error: %s&quot;, reportBuilder.toString(), e);
+        }
+</code></pre><p>最终的格式如下：</p>
+<pre><code>{
+&quot;machine&quot;: 2015,
+&quot;detail&quot;: &quot;ENTER&quot;,
+&quot;cost&quot;: 3205,
+&quot;viewInfo&quot;: {
+    &quot;viewDeep&quot;: 10,
+    &quot;viewCount&quot;: 6,
+    &quot;activity&quot;: &quot;TestFpsActivity&quot;
+},
+&quot;stack&quot;: &quot;3,195,1,10\n1,33,1,58\n2,206,1,21\n3,161,1,16\n4,180,1,16\n5,169,1,16\n6,96,1,10\n7,98,1,10\n4,183,2,5\n5,211,6,0\n0,30,1,56\n&quot;,
+&quot;stackKey&quot;: &quot;0,30,1,56\n&quot;,
+&quot;tag&quot;: &quot;Trace_EvilMethod&quot;,
+&quot;process&quot;: &quot;sample.tencent.matrix&quot;
+}
+</code></pre><p>EvilMethodTracer就先分析到这里，下面来看看StartUpTracer</p>
+<h4 id="StartUpTracer"><a href="#StartUpTracer" class="headerlink" title="StartUpTracer"></a>StartUpTracer</h4><p>StartUpTracer是用于分析activity的启动时间的，之前在分析MethodBeat时提到了通过hook记录activity在LAUNCH_ACTIVITY和ENTER_ANIMATION_COMPLETE两个时间点，两个时间点在这里便是利用了起来。实现的核心方法在<code>onActivityEntered()</code>里：</p>
+<pre><code>String activityName = activity.getComponentName().getClassName();
+    if (!mActivityEnteredMap.containsKey(activityName) || isFocus) {
+        mActivityEnteredMap.put(activityName, System.currentTimeMillis());
+    }
+    if (!isFocus) {
+        MatrixLog.i(TAG, &quot;[onActivityEntered] isFocus false,activityName:%s&quot;, activityName);
+        return;
+    }
+
+    if (mTraceConfig.isHasSplashActivityName() &amp;&amp; activityName.equals(mTraceConfig.getSplashActivityName())) {
+        MatrixLog.i(TAG, &quot;[onActivityEntered] has splash activity! %s&quot;, mTraceConfig.getSplashActivityName());
+        return;
+    }
+
+    getMethodBeat().lockBuffer(false);
+
+    long activityEndTime = getValueFromMap(mActivityEnteredMap, activityName);
+    long firstActivityStart = getValueFromMap(mFirstActivityMap, mFirstActivityName);
+    if (activityEndTime &lt;= 0 || firstActivityStart &lt;= 0) {
+        MatrixLog.w(TAG, &quot;[onActivityEntered] error activityCost! [%s:%s]&quot;, activityEndTime, firstActivityStart);
+        mFirstActivityMap.clear();
+        mActivityEnteredMap.clear();
+        return;
+    }
+</code></pre><p>这是方法的前一段，这里有两个hashmap，mFirstActivityMap记录activity在onCreate时的时间，mActivityEnteredMap记录activity在onActivityEntered时的时间，onActivityEntered这个方法的调用是通过hook实现的在WindowFocusChange执行的，<br>OnActivityEnter()方法后面的内容是：</p>
+<pre><code>long activityCost = activityEndTime - firstActivityStart;
+    //sApplicationCreateEndTime是methodBeat通过hook得到的
+    long appCreateTime = Hacker.sApplicationCreateEndTime - Hacker.sApplicationCreateBeginTime;
+   long betweenCost = firstActivityStart - Hacker.sApplicationCreateEndTime;
+    long allCost = activityEndTime - Hacker.sApplicationCreateBeginTime;
+
+    if (isWarnStartUp) {
+        betweenCost = 0;
+        allCost = activityCost;
+    }
+    long splashCost = 0;
+    if (mTraceConfig.isHasSplashActivityName()) {
+        long tmp = getValueFromMap(mActivityEnteredMap, mTraceConfig.getSplashActivityName());
+
+        splashCost = tmp == 0 ? 0 : getValueFromMap(mActivityEnteredMap, activityName) - tmp;
+    }
+    if (appCreateTime &lt;= 0) {
+        MatrixLog.e(TAG, &quot;[onActivityEntered] appCreateTime is wrong! appCreateTime:%s&quot;, appCreateTime);
+        mFirstActivityMap.clear();
+        mActivityEnteredMap.clear();
+        return;
+    }
+    if (mTraceConfig.isHasSplashActivityName() &amp;&amp; splashCost &lt; 0) {
+        MatrixLog.e(TAG, &quot;splashCost &lt; 0! splashCost:%s&quot;, splashCost);
+        return;
+    }
+    EvilMethodTracer tracer = getTracer(EvilMethodTracer.class);
+    if (null != tracer) {
+        long thresholdMs = isWarnStartUp ? mTraceConfig.getWarmStartUpThresholdMs() : mTraceConfig.getStartUpThresholdMs();
+        int startIndex = isWarnStartUp ? mFirstActivityIndex : Hacker.sApplicationCreateBeginMethodIndex;
+        int curIndex = getMethodBeat().getCurIndex();
+        if (allCost &gt; thresholdMs) {
+            MatrixLog.i(TAG, &quot;appCreateTime[%s] is over threshold![%s], dump stack! index[%s:%s]&quot;, appCreateTime, thresholdMs, startIndex, curIndex);
+            EvilMethodTracer evilMethodTracer = getTracer(EvilMethodTracer.class);
+            if (null != evilMethodTracer) {
+                evilMethodTracer.handleBuffer(EvilMethodTracer.Type.STARTUP, startIndex, curIndex, MethodBeat.getBuffer(), appCreateTime, Constants.SUBTYPE_STARTUP_APPLICATION);
+            }
+        }
+    }
+     MatrixLog.i(TAG, &quot;[onActivityEntered] firstActivity:%s appCreateTime:%dms betweenCost:%dms activityCreate:%dms splashCost:%dms allCost:%sms isWarnStartUp:%b ApplicationCreateScene:%s&quot;,
+            mFirstActivityName, appCreateTime, betweenCost, activityCost, splashCost, allCost, isWarnStartUp, Hacker.sApplicationCreateScene);
+
+    mHandler.post(new StartUpReportTask(activityName, appCreateTime, activityCost, betweenCost, splashCost, allCost, isWarnStartUp, Hacker.sApplicationCreateScene));
+
+    mFirstActivityMap.clear();
+    mActivityEnteredMap.clear();
+    isFirstActivityCreate = false;
+    mFirstActivityName = null;
+    onDestroy();
+</code></pre><p> 这段代码统计了application启动耗时、SplashActivity（欢迎页）耗时、应用和activity之间的耗时，统计好的格式如下：</p>
+<pre><code>{
+&quot;machine&quot;: 4,
+&quot;application_create&quot;: 415,
+&quot;first_activity_create&quot;: 240,
+&quot;stage_between_app_and_activity&quot;: 0,
+&quot;scene&quot;: &quot;com.tencent.mm.app.WeChatSplashActivity&quot;,
+&quot;is_warm_start_up&quot;: false,
+&quot;tag&quot;: &quot;Trace_StartUp&quot;,
+&quot;process&quot;: &quot;com.tencent.mm&quot;,
+&quot;time&quot;: 1528278018147
+}
+</code></pre><p>StartUpTracer先分析到这，还剩下最后一个FPSTracer</p>
+<h4 id="FPSTracer"><a href="#FPSTracer" class="headerlink" title="FPSTracer"></a>FPSTracer</h4><p>FPSTracer统计的是帧率，统计对应的activity、fragment的掉帧水平，利用的也是Choreographer的<code>doFrame()</code>,我们直接来看它的实现：</p>
+<pre><code>@Override
+public void doFrame(long lastFrameNanos, long frameNanos) {
+    //isInvalid是值是否在前台，isDrawing是否开始绘制
+    if (!isInvalid &amp;&amp; isDrawing &amp;&amp; isEnterAnimationComplete() &amp;&amp; mTraceConfig.isTargetScene(getScene())) {
+         //分析
+        handleDoFrame(lastFrameNanos, frameNanos, getScene());
+    }
+    isDrawing = false;
+}
+</code></pre><p>   在开始onDraw开始后，调用了handleDoFrame</p>
+<pre><code>private void handleDoFrame(long lastFrameNanos, long frameNanos, String scene) {
+
+    int sceneId;
+    if (mSceneToSceneIdMap.containsKey(scene)) {
+        sceneId = mSceneToSceneIdMap.get(scene);
+    } else {
+        //记录界面的名称和界面的编号
+        sceneId = mSceneToSceneIdMap.size() + 1;
+        mSceneToSceneIdMap.put(scene, sceneId);
+        mSceneIdToSceneMap.put(sceneId, scene);
+    }
+    int trueId = 0x0;
+    trueId |= sceneId;
+    trueId = trueId &lt;&lt; 22;
+    //计算此帧的耗时
+    long offset = frameNanos - lastFrameNanos;
+    trueId |= ((offset / FACTOR) &amp; 0x3FFFFF);
+    //超过5秒
+    if (offset &gt;= 5 * 1000000000L) {
+        MatrixLog.w(TAG, &quot;[handleDoFrame] WARNING drop frame! offset:%s scene%s&quot;, offset, scene);
+    }
+    synchronized (this.getClass()) {
+        //记录
+        mFrameDataList.add(trueId);
+    }
+}
+</code></pre><p>在这里只是做了记录，内部的定时器mLazyScheduler在onCreate是启动，时间间隔默认是120秒，</p>
+<pre><code> public void onTimeExpire() {
+    doReport();
+}
+</code></pre><p>   调用<code>doReport()</code></p>
+<pre><code>private void doReport() {
+    LinkedList&lt;Integer&gt; reportList;
+    synchronized (this.getClass()) {
+        if (mFrameDataList.isEmpty()) {
+            return;
+        }
+        reportList = mFrameDataList;
+        mFrameDataList = new LinkedList&lt;&gt;();
+    }
+    //reportList里的元素包含了sceneId和帧耗时
+    for (int trueId : reportList) {
+        int scene = trueId &gt;&gt; 22;
+        int durTime = trueId &amp; 0x3FFFFF;
+        LinkedList&lt;Integer&gt; list = mPendingReportSet.get(scene);
+        if (null == list) {
+            list = new LinkedList&lt;&gt;();
+            mPendingReportSet.put(scene, list);
+        }
+        list.add(durTime);
+    }
+    reportList.clear();
+    //mPendingReportSet里取到了scene和其对应的帧内容
+    for (int i = 0; i &lt; mPendingReportSet.size(); i++) {
+        int key = mPendingReportSet.keyAt(i);
+        LinkedList&lt;Integer&gt; list = mPendingReportSet.get(key);
+        if (null == list) {
+            continue;
+        }
+        int sumTime = 0;
+        int markIndex = 0;
+        int count = 0;
+
+        int[] dropLevel = new int[DropStatus.values().length]; // record the level of frames dropped each time
+        int[] dropSum = new int[DropStatus.values().length]; // record the sum of frames dropped each time
+        int refreshRate = (int) Constants.DEFAULT_DEVICE_REFRESH_RATE * OFFSET_TO_MS;
+        for (Integer period : list) {
+            sumTime += period;
+            count++;
+            int tmp = period / refreshRate - 1;
+            if (tmp &gt;= Constants.DEFAULT_DROPPED_FROZEN) {
+                dropLevel[DropStatus.DROPPED_FROZEN.index]++;
+                dropSum[DropStatus.DROPPED_FROZEN.index] += tmp;
+            } else if (tmp &gt;= Constants.DEFAULT_DROPPED_HIGH) {
+                dropLevel[DropStatus.DROPPED_HIGH.index]++;
+                dropSum[DropStatus.DROPPED_HIGH.index] += tmp;
+            } else if (tmp &gt;= Constants.DEFAULT_DROPPED_MIDDLE) {
+                dropLevel[DropStatus.DROPPED_MIDDLE.index]++;
+                dropSum[DropStatus.DROPPED_MIDDLE.index] += tmp;
+            } else if (tmp &gt;= Constants.DEFAULT_DROPPED_NORMAL) {
+                dropLevel[DropStatus.DROPPED_NORMAL.index]++;
+                dropSum[DropStatus.DROPPED_NORMAL.index] += tmp;
+            } else {
+                dropLevel[DropStatus.DROPPED_BEST.index]++;
+                dropSum[DropStatus.DROPPED_BEST.index] += (tmp &lt; 0 ? 0 : tmp);
+            }
+
+            if (sumTime &gt;= mTraceConfig.getTimeSliceMs() * OFFSET_TO_MS) { // if it reaches report time
+                float fps = Math.min(60.f, 1000.f * OFFSET_TO_MS * (count - markIndex) / sumTime);
+                MatrixLog.i(TAG, &quot;scene:%s fps:%s sumTime:%s [%s:%s]&quot;, mSceneIdToSceneMap.get(key), fps, sumTime, count, markIndex);
+                try {
+                    JSONObject dropLevelObject = new JSONObject();
+                    dropLevelObject.put(DropStatus.DROPPED_FROZEN.name(), dropLevel[DropStatus.DROPPED_FROZEN.index]);
+                    dropLevelObject.put(DropStatus.DROPPED_HIGH.name(), dropLevel[DropStatus.DROPPED_HIGH.index]);
+                    dropLevelObject.put(DropStatus.DROPPED_MIDDLE.name(), dropLevel[DropStatus.DROPPED_MIDDLE.index]);
+                    dropLevelObject.put(DropStatus.DROPPED_NORMAL.name(), dropLevel[DropStatus.DROPPED_NORMAL.index]);
+                    dropLevelObject.put(DropStatus.DROPPED_BEST.name(), dropLevel[DropStatus.DROPPED_BEST.index]);
+
+                    JSONObject dropSumObject = new JSONObject();
+                    dropSumObject.put(DropStatus.DROPPED_FROZEN.name(), dropSum[DropStatus.DROPPED_FROZEN.index]);
+                    dropSumObject.put(DropStatus.DROPPED_HIGH.name(), dropSum[DropStatus.DROPPED_HIGH.index]);
+                    dropSumObject.put(DropStatus.DROPPED_MIDDLE.name(), dropSum[DropStatus.DROPPED_MIDDLE.index]);
+                    dropSumObject.put(DropStatus.DROPPED_NORMAL.name(), dropSum[DropStatus.DROPPED_NORMAL.index]);
+                    dropSumObject.put(DropStatus.DROPPED_BEST.name(), dropSum[DropStatus.DROPPED_BEST.index]);
+
+                    JSONObject resultObject = new JSONObject();
+                    resultObject = DeviceUtil.getDeviceInfo(resultObject, getPlugin().getApplication());
+
+                    resultObject.put(SharePluginInfo.ISSUE_SCENE, mSceneIdToSceneMap.get(key));
+                    resultObject.put(SharePluginInfo.ISSUE_DROP_LEVEL, dropLevelObject);
+                    resultObject.put(SharePluginInfo.ISSUE_DROP_SUM, dropSumObject);
+                    resultObject.put(SharePluginInfo.ISSUE_FPS, fps);
+                    sendReport(resultObject);
+                } catch (JSONException e) {
+                    MatrixLog.e(TAG, &quot;json error&quot;, e);
+                }
+
+
+                dropLevel = new int[DropStatus.values().length];
+                dropSum = new int[DropStatus.values().length];
+                markIndex = count;
+                sumTime = 0;
+            }
+        }
+
+        // delete has reported data
+        if (markIndex &gt; 0) {
+            for (int index = 0; index &lt; markIndex; index++) {
+                list.removeFirst();
+            }
+        }
+
+        if (!list.isEmpty()) {
+            MatrixLog.d(TAG, &quot;[doReport] sumTime:[%sms &lt; %sms], scene:[%s]&quot;, sumTime / OFFSET_TO_MS, mTraceConfig.getTimeSliceMs(), mSceneIdToSceneMap.get(key));
+        }
+    }
+}
+</code></pre><p>最终解析出来的就是activity对应的帧耗时数据，数据格式如下：</p>
+<pre><code>{
+&quot;machine&quot;: 2015,
+&quot;scene&quot;: &quot;sample.tencent.matrix.trace.TestFpsActivity&quot;,
+&quot;dropLevel&quot;: {
+    &quot;DROPPED_HIGH&quot;: 4,
+    &quot;DROPPED_MIDDLE&quot;: 12,
+    &quot;DROPPED_NORMAL&quot;: 18,
+    &quot;DROPPED_BEST&quot;: 113
+},
+&quot;dropSum&quot;: {
+    &quot;DROPPED_HIGH&quot;: 60,
+    &quot;DROPPED_MIDDLE&quot;: 96,
+    &quot;DROPPED_NORMAL&quot;: 51,
+    &quot;DROPPED_BEST&quot;: 6
+},
+&quot;fps&quot;: 24.476625442504883,
+&quot;tag&quot;: &quot;Trace_FPS&quot;,
+&quot;process&quot;: &quot;sample.tencent.matrix&quot;
+}
+</code></pre><p>目前tracePlugin的内容分析完了，其中有些数据的计算没有去展开，大家可以自己查看。</p>
+<h4 id="tracePlugin总结"><a href="#tracePlugin总结" class="headerlink" title="tracePlugin总结"></a>tracePlugin总结</h4><p>这里主要分析得失TracePlugin的实现，其中包括了ANR记录、超时函数记录、帧数统计和启动记录，这还只是Plugins中的一个，内容已经显得有点长了，所以我决定后面的<code>IOCanaryPlugin</code>、<code>SQLiteLintPlugin</code>、<code>ResourcePlugin</code>都分成不同文章来分析。</p>
+<p>自己才疏学浅，肯定有很多不足的地方，有遗漏或错误的地方欢迎指正。</p>
+<p>欢迎转载，注明出处即可，后面的文章还在书写中。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wx.png" alt="苏玉波 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/zfb.png" alt="苏玉波 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/android/" rel="tag"># android</a>
+          
+            <a href="/tags/性能/" rel="tag"># 性能</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/21/python批量下载马拉松图片/" rel="next" title="python批量下载马拉松照片">
+                <i class="fa fa-chevron-left"></i> python批量下载马拉松照片
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div class="ds-thread" data-thread-key="2018/12/27/腾讯性能监控框架Matrix源码分析之第一篇/"
+           data-title="腾讯性能监控框架Matrix源码分析之第一篇" data-url="http://dahei.me/2018/12/27/腾讯性能监控框架Matrix源码分析之第一篇/">
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">苏玉波</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/halibobo" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#腾讯性能监控框架Matrix源码分析之第一篇"><span class="nav-number">1.</span> <span class="nav-text">腾讯性能监控框架Matrix源码分析之第一篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#概述"><span class="nav-number">1.1.</span> <span class="nav-text">概述</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#第一段小结"><span class="nav-number">1.1.1.</span> <span class="nav-text">第一段小结</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TracePlugin"><span class="nav-number">1.1.2.</span> <span class="nav-text">TracePlugin</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TracePlugin初步小结"><span class="nav-number">1.1.3.</span> <span class="nav-text">TracePlugin初步小结</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#第一个纬度：mFrameTracer"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">第一个纬度：mFrameTracer</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#第二个纬度：EvilMethodTracer"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">第二个纬度：EvilMethodTracer</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#插曲—MethodBeat"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">插曲—MethodBeat</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#回到EvilMethodTracer"><span class="nav-number">1.1.4.</span> <span class="nav-text">回到EvilMethodTracer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#StartUpTracer"><span class="nav-number">1.1.5.</span> <span class="nav-text">StartUpTracer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#FPSTracer"><span class="nav-number">1.1.6.</span> <span class="nav-text">FPSTracer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tracePlugin总结"><span class="nav-number">1.1.7.</span> <span class="nav-text">tracePlugin总结</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">苏玉波</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"dahei"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: true,
+        notify: false,
+        appId: 'hy32kQOmUjM1nNNm6kWqXzx0-gzGzoHsz',
+        appKey: 'yQIEmBskkDTllPqvIfBdU0A9',
+        placeholder: '请尽情的吐槽',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'20' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("hy32kQOmUjM1nNNm6kWqXzx0-gzGzoHsz", "yQIEmBskkDTllPqvIfBdU0A9");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+  <script type="text/javascript" src="/js/src/exturl.js?v=5.1.4"></script>
+
+
+</body>
+</html>
